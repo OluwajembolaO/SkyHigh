@@ -1,6 +1,8 @@
 from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 
+from functions import qotd
+
 app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
@@ -12,13 +14,14 @@ def home():
     return render_template("home.html")
 
 @app.route("/chat-box")
-def home():
+def chat():
     return render_template("home.html")
 
 @app.route("/quote-generator")
-def home():
-    return render_template("quote-gen.html")
+def quote():
+    q = qotd()
+    return render_template("quote-gen.html", qu=q)
 
 @app.route("/help-center")
-def home():
+def help():
     return render_template("help.html")
