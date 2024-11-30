@@ -8,4 +8,13 @@
     <div>
         <a href="/"><button class="back-button">Back</button></a>
     </div>
+
+    <div class="chat-container">
+        <form action="/sendmessage" method="POST">
+            <input type="text" id="chat-input" name="message" class="chat-input" placeholder="type here" />
+
+            <button class="send-button" type="submit">Send</button>
+        </form>
+    </div>
+
 {% endblock %}

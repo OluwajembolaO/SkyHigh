@@ -21,5 +21,14 @@ def video():
 def help():
     return render_template("help.html")
 
+@app.route('/sendmessage', methods=['POST'])
+def send_message():
+    message = request.form.get('message')
+
+    if message:
+        print(f"message: {message}")
+
+    return render_template('chat.html') 
+
 if __name__ == '__main__':
     app.run(debug=True)
