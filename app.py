@@ -10,3 +10,15 @@ Session(app)
 @app.route("/")
 def home():
     return render_template("home.html")
+
+@app.route("/chat-box")
+def home():
+    return render_template("home.html")
+
+@app.route("/quote-generator")
+def home():
+    return render_template("quote-gen.html")
+
+@app.route("/help-center")
+def home():
+    return render_template("help.html")
