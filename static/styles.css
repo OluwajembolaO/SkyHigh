@@ -12,10 +12,27 @@ button, .help-button {
     transition: background-color 0.2s;
 }
 
-button:hover, .help-button:hover {
+button:hover, .help-button:hover, .back-button:hover {
     background-color: lightgreen;
 }
 
+.back-button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    font-size: 20px;
+    padding: 20px 40px;
+    margin: 15px;
+    cursor: pointer;
+    border-radius: 20px;
+    width: 150px;
+    text-align: center;
+    font-family: 'Indie Flower', sans-serif;
+    transition: background-color 0.2s;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+}
 body {
     margin: 0;
     padding: 0;
