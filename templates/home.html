@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky High</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+    <h1>Sky High</h1>
+    <p class="qotd">Quote of the Day: </p>
+    
+    <div>
+        <button onclick="window.location.href='/chatbot'">Talk to 'mascot'!</button>
+        <button onclick="window.location.href='/video'">Video</button>
+        <button class="help-button" onclick="window.location.href='/help'">Help</button>
+    </div>
+</body>
+</html>
