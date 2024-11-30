@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
-{% block title %} Home {% endblock %}
+{% block title %} Sky High {% endblock %}
 
-{% block body %} hi {% endblock %}
+{% block body %} 
+    <h1>Sky High</h1>
+    <p class="qotd">Quote of the Day: {{ qu }}</p>
+
+    <div>
+        <a href="/chatbot"><button>Talk to 'mascot'!</button></a>
+        <a href="/video"><button>Video</button></a>
+        <a class="help-button" href="/help"><button>Get Help</button></a>
+    </div>
+{% endblock %}

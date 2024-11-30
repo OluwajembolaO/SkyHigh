@@ -3,20 +3,19 @@ from flask import Flask, redirect, render_template, request, session
 from functions import qotd
 
 app = Flask(__name__)
-
+q = qotd()
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("home.html", qu = q)
 
-@app.route("/chat-box")
+@app.route("/chatbot")
 def chat():
-    return render_template("home.html")
+    return render_template("chat.html")
 
-@app.route("/quote-generator")
-def quote():
-    q = qotd()
-    return render_template("quote-gen.html", qu=q)
+@app.route("/video")
+def video():
+    return render_template("video.html")
 
 @app.route("/help-center")
 def help():
