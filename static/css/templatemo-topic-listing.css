@@ -682,6 +682,9 @@ blockquote {
   width: 200px;
 }
 
+.text-light-grey {
+  color: #d3d3d3;  
+}
 
 /*---------------------------------------
   PAGINATION              
