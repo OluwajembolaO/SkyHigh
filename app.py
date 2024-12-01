@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    q = qotd()
+    return render_template("index.html", qu=q)
 
 @app.route("/chat-box")
 def chat():

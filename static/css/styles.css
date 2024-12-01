@@ -4,6 +4,17 @@
     box-sizing: border-box;
   }
   
+.navbar-custom {
+    background-color: #1076ca; /* Custom orange */
+}
+.navbar-custom ul {
+    background-color: #1076ca;
+    color: #1076ca;
+}
+.navbar-custom a{
+  color: white;
+  background-color: #1076ca;
+}
   body {
     font-family: 'Open Sans', sans-serif;
     color: #1C3D72;
