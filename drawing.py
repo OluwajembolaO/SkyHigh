@@ -22,6 +22,7 @@ def generateImage(user_input):
     responce = requests.get(imageURL)
     img = Image.open(BytesIO(responce.content))
     img.save('generated_image.jpg')
+    print(imageURL)
     return imageURL
 
 
