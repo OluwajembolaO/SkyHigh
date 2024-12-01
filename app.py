@@ -9,9 +9,9 @@ q = qotd()
 def home():
     return render_template("home.html", qu = q)
 
-@app.route("/chatbot")
+@app.route("/therapy")
 def chat():
-    return render_template("chat.html")
+    return render_template("therapy.html")
 
 @app.route("/video")
 def video():
