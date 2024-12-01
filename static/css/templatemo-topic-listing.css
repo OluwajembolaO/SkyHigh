@@ -683,7 +683,11 @@ blockquote {
 }
 
 .text-light-grey {
-  color: #d3d3d3;  
+  color: #b3ffca;  
+}
+
+.text-lighter-grey {
+  color: #a9ffb0;  
 }
 
 /*---------------------------------------
