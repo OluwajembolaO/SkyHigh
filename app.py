@@ -11,9 +11,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-con = sqlite3.connect("goals.db", check_same_thread=False)
+con = sqlite3.connect("mental.db", check_same_thread=False)
 cur = con.cursor()
 
+create_databases()
 
 q = qotd()
 
@@ -30,6 +31,7 @@ def login():
         password = request.form.get("password")
 
         if not (username and password): return "Fill out all fields"
+      
         check = cur.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
         if not (check and check_password_hash(check[0][2], password)): return "Incorrect username or password"
 
@@ -37,8 +39,8 @@ def login():
         return redirect("/")
     return render_template("login.html")
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
+@app.route('/register', methods=['GET', 'POST'])
+def register():
     if request.method == "POST":
         username = request.form.get("username").rstrip()
         password = request.form.get("password")
@@ -52,7 +54,7 @@ def signup():
 
         con.commit()
         return redirect("/login")
-    return render_template("signup.html")
+    return render_template("register.html")
 
 @app.route("/video")
 @login_required

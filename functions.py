@@ -13,7 +13,7 @@ from secret import *
 
 
 def create_databases():
-    con = sqlite3.connect("goals.db", check_same_thread=False)
+    con = sqlite3.connect("mental.db", check_same_thread=False)
     cur = con.cursor()
 
     cur.execute('''
@@ -31,7 +31,7 @@ def create_databases():
             id INTEGER PRIMARY KEY NOT NULL,
             images TEXT NOT NULL,
             date DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREGIN KEY(user_id) REFERENCES users(id)
+            FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
 
