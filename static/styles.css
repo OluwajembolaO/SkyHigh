@@ -56,14 +56,14 @@ button:hover, .help-button:hover, .back-button:hover {
 
 .chat-button {
     position: absolute;
-    top: 30%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .video-button {
     position: absolute;
-    top: 45%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -103,4 +103,17 @@ button:hover, .help-button:hover, .back-button:hover {
 
 .send-button:hover {
     background-color: #45a049;
+}
+
+.qotd {
+    width: 80vw;  
+    height: 110px;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: clamp(14px, 6vw, 32px); 
 }
