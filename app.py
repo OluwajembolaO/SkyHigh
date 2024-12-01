@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, request, session
 
 from qotd import qotd
+from location import fetch_therapy_data
 
 app = Flask(__name__)
 q = qotd()
@@ -8,10 +9,6 @@ q = qotd()
 @app.route("/")
 def home():
     return render_template("home.html", qu = q)
-
-@app.route("/therapy")
-def chat():
-    return render_template("therapy.html")
 
 @app.route("/video")
 def video():
@@ -21,14 +18,18 @@ def video():
 def help():
     return render_template("help.html")
 
-@app.route('/sendmessage', methods=['POST'])
-def send_message():
-    message = request.form.get('message')
+@app.route('/therapy', methods=['GET', 'POST'])
+def therapy():
+    if request.method == 'GET':
+        return render_template('therapy.html') 
+    else:
+        location = request.form.get("location")
+        if not location: return "stop html hacking ur not him"
 
-    if message:
-        print(f"message: {message}")
-
-    return render_template('chat.html') 
+        data = fetch_therapy_data(location)
+        if not data: return "we were unabel to find location. perhaps you typed it wrong?"
+        
+        return render_template('therapy.html', data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)

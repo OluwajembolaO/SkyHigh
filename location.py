@@ -45,7 +45,7 @@ def fetch_therapy_data(location):
             therapies[therapy_name] = therapy_info  # Add to the dictionary
 
         # Return the dictionary
-        return {"Therapies": therapies}
+        return therapies
 
     else:
         print(f"Failed to retrieve data. HTTP Status code: {response.status_code}")
