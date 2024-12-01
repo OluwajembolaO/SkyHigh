@@ -1,28 +1,36 @@
 from flask import Flask, redirect, render_template, request, session
 
-from functions import qotd
+from qotd import qotd
+from location import fetch_therapy_data
 
 app = Flask(__name__)
-
+q = qotd()
 
 @app.route("/")
 def home():
     q = qotd()
     return render_template("index.html", qu=q)
 
-@app.route("/chat-box")
-def chat():
-    return render_template("home.html")
+@app.route("/video")
+def video():
+    return render_template("video.html")
 
-@app.route("/quote-generator")
-def quote():
-    q = qotd()
-    return render_template("quote-gen.html", qu=q)
-
-@app.route("/help-center")
+@app.route("/help")
 def help():
     return render_template("help.html")
 
+@app.route('/therapy', methods=['GET', 'POST'])
+def therapy():
+    if request.method == 'GET':
+        return render_template('therapy.html') 
+    else:
+        location = request.form.get("location")
+        if not location: return "stop html hacking ur not him"
+
+        data = fetch_therapy_data(location)
+        if not data: return "we were unabel to find location. perhaps you typed it wrong?"
+        
+        return render_template('therapy.html', data=data)
+
 if __name__ == '__main__':
     app.run(debug=True)
-
