@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, jsonify
 
 from qotd import qotd
 from location import fetch_therapy_data
@@ -22,15 +22,20 @@ def help():
 @app.route('/therapy', methods=['GET', 'POST'])
 def therapy():
     if request.method == 'GET':
-        return render_template('index.html') 
-    else:
-        location = request.form.get("location")
-        if not location: return "stop html hacking ur not him"
+        return render_template('index.html')  
+    
+    location = request.form.get("location")
+    
+    if not location:
+        return render_template('index.html', error="Please enter a valid location.") 
+    data = fetch_therapy_data(location)
+    
+    if not data:
+        return render_template('index.html', error="No therapists found nearby.")
 
-        data = fetch_therapy_data(location)
-        if not data: return "we were unabel to find location. perhaps you typed it wrong?"
-        
-        return render_template('index.html', data=data)
+    return render_template('index.html', data=data)  
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

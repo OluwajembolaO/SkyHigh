@@ -50,4 +50,3 @@ def fetch_therapy_data(location):
     else:
         print(f"Failed to retrieve data. HTTP Status code: {response.status_code}")
         return None
-
