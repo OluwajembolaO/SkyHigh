@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, session
 
-from functions import qotd
+from qotd import qotd
 
 app = Flask(__name__)
 q = qotd()
