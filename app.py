@@ -19,23 +19,20 @@ def video():
 def help():
     return render_template("help.html")
 
-@app.route('/therapy', methods=['GET', 'POST'])
-def therapy():
-    if request.method == 'GET':
-        return render_template('index.html')  
-    
-    location = request.form.get("location")
-    
-    if not location:
-        return render_template('index.html', error="Please enter a valid location.") 
-    data = fetch_therapy_data(location)
-    
-    if not data:
-        return render_template('index.html', error="No therapists found nearby.")
+@app.route('/therapy', methods=['POST'])
+def find_therapy():
+    data = request.get_json()
+    if data['location'] == "" or 'location' not in data:
+        return jsonify({'error': 'Location is required.'}), 400
 
-    return render_template('index.html', data=data)  
+    location = data['location']
 
+    therapies = fetch_therapy_data(location)
 
+    if not therapies:
+        return jsonify({'error': 'No therapists found nearby.'}), 404
+
+    return jsonify(therapies)
 
 if __name__ == '__main__':
     app.run(debug=True)

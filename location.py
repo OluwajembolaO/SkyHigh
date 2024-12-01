@@ -9,7 +9,7 @@ def fetch_therapy_data(location):
     encoded_location = urllib.parse.quote(location)
 
     # Yelp API request URL with dynamic location
-    url = f"https://api.yelp.com/v3/businesses/search?location={encoded_location}&categories=therapy,wellness&term=therapy&sort_by=best_match&limit=5"
+    url = f"https://api.yelp.com/v3/businesses/search?location={encoded_location}&categories=therapy,wellness&term=therapy&sort_by=best_match&limit=6"
 
     headers = {
         "accept": "application/json",

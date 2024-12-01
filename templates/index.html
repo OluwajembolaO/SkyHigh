@@ -646,17 +646,17 @@ https://templatemo.com/tm-590-topic-listing
                         </div>
             
                         <div class="col-lg-6 col-12 mx-auto">
-                            <form action="/therapy" method="POST">
+                            <form id="searchForm">
                                 <div class="mb-3">
                                     <label for="location" class="form-label">Enter your location:</label>
                                     <input type="text" class="form-control" id="location" name="location" placeholder="City, State or ZIP">
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Search</button>
-                            </form>
+                            </form>                            
                         </div>
                     </div>
             
-                    <div class="row mt-5" id="resultsSection">
+                    <div class="row mt-5" id="resultsSection" style="display: none;">
                         {% if error %}
                             <p class="text-center text-danger">{{ error }}</p>
                         {% elif data %}
@@ -683,16 +683,61 @@ https://templatemo.com/tm-590-topic-listing
                     </div>
                 </div>
             </section>
-            
+
             <script>
-                window.onload = function() {
-                    if (document.getElementById('resultsSection').offsetHeight > 0) {
-                        window.scrollTo({
-                            top: document.getElementById('resultsSection').offsetTop - 400,
-                            behavior: 'smooth'
+                document.getElementById('searchForm').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent page reload
+
+                    const location = document.getElementById('location').value.trim();
+                    const resultsSection = document.getElementById('resultsSection');
+
+                    // Clear results section and show it
+                    resultsSection.style.display = 'block';
+                    resultsSection.innerHTML = '<p class="text-center">Loading...</p>';
+
+                    fetch('/therapy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ location }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            resultsSection.innerHTML = ''; // Clear loading message
+
+                            if (data.error) {
+                                resultsSection.innerHTML = `<p class="text-center text-danger">${data.error}</p>`;
+                            } else if (Object.keys(data).length > 0) {
+                                let html = '<h2 class="text-center mb-4">Therapists Near Your Area</h2><div class="row">';
+                                for (const [name, details] of Object.entries(data)) {
+                                    html += `
+                                        <div class="col-md-6 col-lg-4 mb-4">
+                                            <div class="card">
+                                                <img src="${details.image_url}" class="card-img-top" alt="${name}" style="height: 200px; object-fit: cover;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${name}</h5>
+                                                    <p><strong>Address:</strong> ${details.location}</p>
+                                                    <p><strong>Phone:</strong> ${details.PhoneNumber}</p>
+                                                    <p><strong>Rating:</strong> ${details.rating} (${details.review_count} reviews)</p>
+                                                    <a href="${details.url}" class="btn btn-primary" target="_blank">Visit Now!</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                                html += '</div>';
+                                resultsSection.innerHTML = html;
+                            } else {
+                                resultsSection.innerHTML = '<p class="text-center text-danger">No therapists found nearby.</p>';
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                            resultsSection.innerHTML = '<p class="text-center text-danger">An error occurred. Please try again.</p>';
                         });
-                    }
-                };
+                });
+
             </script>
             
             
