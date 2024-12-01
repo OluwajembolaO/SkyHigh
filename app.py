@@ -8,7 +8,8 @@ q = qotd()
 
 @app.route("/")
 def home():
-    return render_template("home.html", qu = q)
+    q = qotd()
+    return render_template("index.html", qu=q)
 
 @app.route("/video")
 def video():
