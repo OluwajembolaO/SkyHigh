@@ -27,7 +27,7 @@ def fetch_therapy_data(location):
         therapies = {}
 
         # Loop through businesses and extract relevant info
-        for i, business in enumerate(data.get('businesses', [])):
+        for business in data.get('businesses', []):
             therapy_name = business.get("name", "N/A")  # Create a unique name for each therapy place
 
             # Extract relevant details for each business
