@@ -2,7 +2,7 @@
 **Sky High** is a web application designed to help individuals with their mental well being. This application is mainly purposed to allow users to generate images based on information from their day. This application also allows the user to search for the nearest therapists near the user with their given location. Additionally, the platform also provides daily inspirational quotes. 
 
 ## *Why?*
-The generated images are saved and lets the user come back and review on past happiness that can allow them to reminince with their current selves and be happy again. The therapist finders can help the user know that help is always around the corner if they need it. The daily quotes can mean a lot to anyone, even a couple positive words can change a persons outlook on life. 
+The generated images are saved and lets the user come back and review on past happiness that can allow them to reminisce with their current selves and be happy again. The therapist finders can help the user know that help is always around the corner if they need it. The daily quotes can mean a lot to anyone, even a couple positive words can change a persons outlook on life. 
 
 ## **Features**
 Whiteboard: Generates images based on a daily occurrences given by the user.
