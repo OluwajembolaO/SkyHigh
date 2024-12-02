@@ -23,3 +23,8 @@ Database: SQL for managing user interactions and login information.
 Geolocation: Yelp Geolocation API for accurate location-based therapist searches.
 
 Inspirational Quotes: ZenQuotes API for delivering daily inspirational quotes.
+
+## Authors
+* Oluwajembola Orioke (Frontend/Backend Developer)
+* eefward (Frontend Developer)
+* GuestyTheBesty (Backend Developer)
