@@ -1,0 +1,26 @@
+.logo-section {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1E90FF, #87CEEB, #E0FFFF);
+}
+
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-card {
+    max-width: 40vh;
+    min-width: 300px;
+    margin: auto;
+}
+
+.smaller {
+    font-size: 1em;
+    margin-bottom: 2px;
+}
