@@ -59,7 +59,15 @@ def whiteboard():
 
 @app.route("/getImage", methods=['GET', 'POST'])
 def get_image():
-    data = request.get_json()
+    if request.method == 'POST':
+        story = request.form.get('story')  
+        
+        image = generateImage(story)
+        print(image)
+
+        return render_template('whiteboard.html', story=story, image=image)
+
+    return render_template('whiteboard.html')
 
 @app.route('/therapy', methods=['POST'])
 def find_therapy():

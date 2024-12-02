@@ -28,3 +28,22 @@
 .white {
     color: white;
 }
+
+.image-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+.loading {
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    color: #888;
+}
+
+
+img {
+    max-width: 100%;
+    height: auto;
+}
