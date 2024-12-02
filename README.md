@@ -11,7 +11,7 @@ User-Friendly Interface: A positive and clean user-interface where all tools are
 ## Tech Stack
 Frontend: HTML, CSS, Bootstrap, and JavaScript for a clean and responsive user interface.
 
-Backend: Python with AI-powered functionalities to enhance ???.
+Backend: Flask and Python with AI-powered functionalities to enhance ???.
 
 Database: SQL for managing user interactions and login information.
 
