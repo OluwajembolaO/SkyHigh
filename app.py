@@ -51,7 +51,6 @@ def register():
 
 
 @app.route('/therapy', methods=['POST'])
-@login_required
 def find_therapy():
     data = request.get_json()
     if data['location'] == "" or 'location' not in data:
