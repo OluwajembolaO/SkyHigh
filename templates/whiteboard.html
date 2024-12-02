@@ -77,45 +77,25 @@ https://templatemo.com/tm-590-topic-listing
                         <div class="col-lg-12 col-12 text-center">
                             <h2 class="mb-5">Write about your feelings!</h2>
                         </div>
-                        <div>
-                            <img class = "text-center" src = "" alt = "Your image"> 
-                        </div>
-            
+        
                         <div class="col-lg-6 col-12 mx-auto">
-                            <form id="searchImage">
-                                <div class="mb-3">
-                                    <label for="location" class="form-label">Write about your day!</label>
-                                    <input type="text" class="form-control" id="location" name="location" placeholder="City, State or ZIP">
+                            <form id="searchImage" method="POST" action="/getImage">
+                                <div class="image-container">
+                                    {% if image %}
+                                        <img class="text-center" src="{{ image }}" alt="Your generated image" id="generatedImage" style="max-width: 100%; display: block;">
+                                    {% else %}
+                                        <p>No image generated yet. Please submit your story.</p>
+                                    {% endif %}
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Search</button>
-                            </form>                            
+        
+                                <div class="mb-3">
+                                    <label for="story" class="form-label">Write about your day!</label>
+                                    <input type="text" class="form-control" id="story" name="story" placeholder="Write Here!" required>
+                                </div>
+        
+                                <button type="submit" class="btn btn-primary w-100">Submit Story</button>
+                            </form>
                         </div>
-                    </div>
-            
-                    <div class="row mt-5" id="resultsSection" style="display: none;">
-                        {% if error %}
-                            <p class="text-center text-danger">{{ error }}</p>
-                        {% elif data %}
-                            <h2 class="text-center mb-4">Top 5 Therapists Near Your Area</h2>
-                            <div class="row">
-                                {% for name, details in data.items() %}
-                                    <div class="col-md-6 col-lg-4 mb-4">
-                                        <div class="card">
-                                            <img src="{{ details.image_url }}" class="card-img-top" alt="{{ name }}" style="height: 200px; object-fit: cover;">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ name }}</h5>
-                                                <p><strong>Address:</strong> {{ details.location }}</p>
-                                                <p><strong>Phone:</strong> {{ details.PhoneNumber }}</p>
-                                                <p><strong>Rating:</strong> {{ details.rating }} ({{ details.review_count }} reviews)</p>
-                                                <a href="{{ details.url }}" class="btn btn-primary" target="_blank">Visit Now!</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="text-center text-danger">No therapists found nearby.</p>
-                        {% endif %}
                     </div>
                 </div>
             </section>

@@ -31,6 +31,7 @@ def login():
         if not (check and check_password_hash(check[0][2], password)): return "Incorrect username or password"
 
         current_username = username
+        print(current_username)
         return redirect("/")
     return render_template("login.html")
 
@@ -58,7 +59,15 @@ def whiteboard():
 
 @app.route("/getImage", methods=['GET', 'POST'])
 def get_image():
-    data = request.get_json()
+    if request.method == 'POST':
+        story = request.form.get('story')
+        image = generateImage(story, current_username)
+        print(image)
+
+        return render_template('whiteboard.html', story=story, image=image)
+    print("NO IMAGE")
+    return render_template('whiteboard.html')
+
 
 @app.route('/therapy', methods=['POST'])
 def find_therapy():
