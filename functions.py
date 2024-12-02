@@ -161,7 +161,7 @@ def generateImage(user_input, current_username):
     VALUES (?, ?)
     ''', (user_id, upload_image_to_imgbb(imageURL, IMGBB_API_KEY)))
     con.commit()
-    
+ 
     return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
 
 
