@@ -69,83 +69,22 @@ https://templatemo.com/tm-590-topic-listing
                 </div>
             </nav>
 
-            <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-8 col-12 mx-auto">
-                            <h1 class="text-white text-center">Elevate Your Mind, Find Your Peace.</h1>
-                            <h6 class="text-center">A Platform to Embrace Wellness.</h6>
-                        </div>
-            
-                        <div class="col-12 text-center mt-5">
-                            <h3 class="mb-2 text-light-grey"><b>Quote of the Day</b></h4> 
-                        </div>
-                        <h4 class="mb-0 text-center text-light-grey">{{ qu }}</h5> 
-                        
-                        
-                    </div>
-                </div>
-            </section>
-        
-
-            <section class="featured-section">
-                <div class="container">
-                    <div class="row justify-content-center">
-
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block bg-white shadow-lg">
-                                <a href="topics-detail.html">
-                                    <div class="d-flex">
-                                        <div>
-                                            <h5 class="mb-2">Who We Are</h5>
-
-                                            <p class="mb-0">Sky High is a platform dedicated to promoting mental wellness, fostering creativity, and connecting individuals to resources that inspire peace and personal growth.</p>
-                                        </div>
-
-                                    </div>
-
-                                    <img src="../static/img/mental-health-treatment.jpg" class="custom-block-image img-fluid" alt="">
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6 col-12">
-                            <div class="custom-block custom-block-overlay">
-                                <div class="d-flex flex-column h-100">
-                                    <img src="../static/img/white-cat-image.jpg" class="custom-block-image img-fluid" alt="">
-
-                                    <div class="custom-block-overlay-text d-flex">
-                                        <div>
-                                            <h5 class="text-white mb-2">Whiteboard</h5>
-
-                                            <p class="text-white">The Whiteboard allows you to generate all of your feelings into an image</p>
-
-                                            <a href="topics-detail.html" class="btn custom-btn mt-2 mt-lg-3">Learn More</a>
-                                            <br>
-                                            <a href="topics-detail.html" class="btn custom-btn mt-2 mt-lg-3">Write</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="section-overlay"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
+    
             
             <section class="therapy-section section-padding section-bg" id="section_5">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12 col-12 text-center">
-                            <h2 class="mb-5">Find Therapists Near You!</h2>
+                            <h2 class="mb-5">Write about your feelings!</h2>
+                        </div>
+                        <div>
+                            <img class = "text-center" src = "" alt = "Your image"> 
                         </div>
             
                         <div class="col-lg-6 col-12 mx-auto">
-                            <form id="searchForm">
+                            <form id="searchImage">
                                 <div class="mb-3">
-                                    <label for="location" class="form-label">Enter your location:</label>
+                                    <label for="location" class="form-label">Write about your day!</label>
                                     <input type="text" class="form-control" id="location" name="location" placeholder="City, State or ZIP">
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -181,185 +120,6 @@ https://templatemo.com/tm-590-topic-listing
                 </div>
             </section>
 
-            <script>
-                document.getElementById('searchForm').addEventListener('submit', function (event) {
-                    event.preventDefault(); // Prevent page reload
-
-                    const location = document.getElementById('location').value.trim();
-                    const resultsSection = document.getElementById('resultsSection');
-
-                    // Clear results section and show it
-                    resultsSection.style.display = 'block';
-                    resultsSection.innerHTML = '<p class="text-center">Loading...</p>';
-
-                    fetch('/therapy', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ location }),
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            resultsSection.innerHTML = ''; // Clear loading message
-
-                            if (data.error) {
-                                resultsSection.innerHTML = `<p class="text-center text-danger">${data.error}</p>`;
-                            } else if (Object.keys(data).length > 0) {
-                                let html = '<h2 class="text-center mb-4">Therapists Near Your Area</h2><div class="row">';
-                                for (const [name, details] of Object.entries(data)) {
-                                    html += `
-                                        <div class="col-md-6 col-lg-4 mb-4">
-                                            <div class="card">
-                                                <img src="${details.image_url}" class="card-img-top" alt="${name}" style="height: 200px; object-fit: cover;">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${name}</h5>
-                                                    <p><strong>Address:</strong> ${details.location}</p>
-                                                    <p><strong>Phone:</strong> ${details.PhoneNumber}</p>
-                                                    <p><strong>Rating:</strong> ${details.rating} (${details.review_count} reviews)</p>
-                                                    <a href="${details.url}" class="btn btn-primary" target="_blank">Visit Now!</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
-                                }
-                                html += '</div>';
-                                resultsSection.innerHTML = html;
-                            } else {
-                                resultsSection.innerHTML = '<p class="text-center text-danger">No therapists found nearby.</p>';
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                            resultsSection.innerHTML = '<p class="text-center text-danger">An error occurred. Please try again.</p>';
-                        });
-                });
-
-            </script>
-            <!-- How Does it work? Section
-            <section class="timeline-section section-padding" id="section_3">
-                <div class="section-overlay"></div>
-
-                <div class="container">
-                    <div class="row">
-
-                        <div class="col-12 text-center">
-                            <h2 class="text-white mb-4">How does it work?</h1>
-                        </div>
-
-                        <div class="col-lg-10 col-12 mx-auto">
-                            <div class="timeline-container">
-                                <ul class="vertical-scrollable-timeline" id="vertical-scrollable-timeline">
-                                    <div class="list-progress">
-                                        <div class="inner"></div>
-                                    </div>
-
-                                    <li>
-                                        <h4 class="text-white mb-3">Search your favourite topic</h4>
-
-                                        <p class="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, cumque magnam? Sequi, cupiditate quibusdam alias illum sed esse ad dignissimos libero sunt, quisquam numquam aliquam? Voluptas, accusamus omnis?</p>
-
-                                        <div class="icon-holder">
-                                          <i class="bi-search"></i>
-                                        </div>
-                                    </li>
-                                    
-                                    <li>
-                                        <h4 class="text-white mb-3">Bookmark &amp; Keep it for yourself</h4>
-
-                                        <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint animi necessitatibus aperiam repudiandae nam omnis est vel quo, nihil repellat quia velit error modi earum similique odit labore. Doloremque, repudiandae?</p>
-
-                                        <div class="icon-holder">
-                                          <i class="bi-bookmark"></i>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <h4 class="text-white mb-3">Read &amp; Enjoy</h4>
-
-                                        <p class="text-white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi vero quisquam, rem assumenda similique voluptas distinctio, iste est hic eveniet debitis ut ducimus beatae id? Quam culpa deleniti officiis autem?</p>
-
-                                        <div class="icon-holder">
-                                          <i class="bi-book"></i>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-12 text-center mt-5">
-                            <p class="text-white">
-                                Want to learn more?
-                                <a href="#" class="btn custom-btn custom-border-btn ms-3">Check out Youtube</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            -->
-
-            <!-- Frequently Asked Questions 
-            <section class="faq-section section-padding" id="section_4">
-                <div class="container">
-                    <div class="row">
-
-                        <div class="col-lg-6 col-12">
-                            <h2 class="mb-4">Frequently Asked Questions</h2>
-                        </div>
-
-                        <div class="clearfix"></div>
-
-                        <div class="col-lg-5 col-12">
-                            <img src="../static/img/faq_graphic.jpg" class="img-fluid" alt="FAQs">
-                        </div>
-
-                        <div class="col-lg-6 col-12 m-auto">
-                            <div class="accordion" id="accordionExample">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        What is Topic Listing?
-                                        </button>
-                                    </h2>
-
-
-                                </div>
-
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        How to find a topic?
-                                    </button>
-                                    </h2>
-
-                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            You can search on Google with <strong>keywords</strong> such as templatemo portfolio, templatemo one-page layouts, photography, digital marketing, etc.
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingThree">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Does it need to paid?
-                                    </button>
-                                    </h2>
-
-                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
-            -->
 
 <footer class="site-footer section-padding">
             <div class="container">
@@ -408,21 +168,6 @@ https://templatemo.com/tm-590-topic-listing
                 </div>
             </div>
         </footer>
-
-        <!--     
-            <h1>Help</h1>
-
-            <p>Dial 988 to talk to someone(Available 24/7)</p>
-            <a href="988lifeline.org">988lifeline.org</a>
-            <p>Text HOME to 741741 to text someone(Available 24/7)</p>
-            <p>Dial 1-800-799-7233 for domestic violence</p>
-            <p>Dial 1-800-996-6228 for family violence</p>
-            <p>Dial 1-800-366-8288 for self-harm</p>
-            <p>Dial 1-888-843-4564 for alcholism and drug dependency</p>
-            <p>Dial 1-833-852-6262 for materbak mental health</p>
-                
-            </p>
-        -->
 
 
         <!-- JAVASCRIPT FILES -->

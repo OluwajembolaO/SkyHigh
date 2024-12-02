@@ -49,7 +49,6 @@ def create_databases():
 
 
 def fetch_therapy_data(location):
-    print("IS ACTIVE")
     # Used for converting spaces commas and more shinanigans
     encoded_location = urllib.parse.quote(location)
 
@@ -66,9 +65,8 @@ def fetch_therapy_data(location):
 
     # Check if the response was successful
     if response.status_code == 200:
-        
         data = response.json()  # Parse the JSON response
-        print(data)
+
         # Prepare the structured data for the therapies dictionary
         therapies = {}
 
@@ -89,7 +87,7 @@ def fetch_therapy_data(location):
             }
 
             therapies[therapy_name] = therapy_info  # Add to the dictionary
-        
+
         # Return the dictionary
         return therapies
 
@@ -97,12 +95,45 @@ def fetch_therapy_data(location):
         print(f"Failed to retrieve data. HTTP Status code: {response.status_code}")
         return None
     
+
+theBot = AzureOpenAI(api_key=AZURE_OPENAI_API_KEY, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_version="2024-05-01-preview")
+
+def upload_image_to_imgbb(image_url, api_key):
+    # Step 1: Download the image from the given URL
+    try:
+        response = requests.get(image_url)
+        response.raise_for_status()
+        image_data = response.content
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading the image: {e}")
+        return None
+
+    # Step 2: Convert the image data to a base64 encoded string
+    encoded_image = base64.b64encode(image_data).decode('utf-8')
+
+    # Step 3: Upload the image to ImgBB
+    upload_url = "https://api.imgbb.com/1/upload"
+    payload = {
+        'key': api_key,
+        'image': encoded_image,
+    }
+
+    try:
+        upload_response = requests.post(upload_url, data=payload)
+        upload_response.raise_for_status()
+        result = upload_response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error uploading the image to ImgBB: {e}")
+        return None
+
+    # Step 4: Return the new URL of the uploaded image
+    if result['status'] == 200:
+        return result['data']['url']
+    else:
+        print(f"Error: {result['error']['message']}")
+        return None
     
 def generateImage(user_input):
-    AZURE_OPENAI_ENDPOINT = AZURE_OPENAI_ENDPOINT
-    AZURE_OPENAI_API_KEY = AZURE_OPENAI_API_KEY
-
-    theBot = AzureOpenAI(api_key=AZURE_OPENAI_API_KEY, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_version="2024-05-01-preview")
     result = theBot.images.generate(
         model = "dalle3",
         prompt = user_input,
@@ -113,7 +144,7 @@ def generateImage(user_input):
     responce = requests.get(imageURL)
     img = Image.open(BytesIO(responce.content))
     img.save('generated_image.jpg')
-    return imageURL
+    return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
 
 
 def login_required(f):
