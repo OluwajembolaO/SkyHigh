@@ -59,9 +59,4 @@ def generateImage(user_input):
     responce = requests.get(imageURL)
     img = Image.open(BytesIO(responce.content))
     img.save('generated_image.jpg')
-    print(imageURL)
-    return imageURL
-
-
-userInput = input("How do you feel right now?:")
-generateImage(userInput)
+    return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
