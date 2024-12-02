@@ -84,9 +84,33 @@
                             <label for="story" class="form-label">Write about your day!</label>
                             <input type="text" class="form-control" id="story" name="story" placeholder="Write Here!" required>
                         </div>
-    
-                        <button type="submit" class="btn btn-primary w-100">Submit Story</button>
-                    </form>
+            
+            <section class="therapy-section section-padding section-bg" id="section_5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 col-12 text-center">
+                            <h2 class="mb-5">Write about your feelings!</h2>
+                        </div>
+        
+                        <div class="col-lg-6 col-12 mx-auto">
+                            <form id="searchImage" method="POST" action="/getImage">
+                                <div class="image-container">
+                                    {% if image %}
+                                        <img class="text-center" src="{{ image }}" alt="Your generated image" id="generatedImage" style="max-width: 100%; display: block;">
+                                    {% else %}
+                                        <p>No image generated yet. Please submit your story.</p>
+                                    {% endif %}
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label for="story" class="form-label">Write about your day!</label>
+                                    <input type="text" class="form-control" id="story" name="story" placeholder="Write Here!" required>
+                                </div>
+        
+                                <button type="submit" class="btn btn-primary w-100">Submit Story</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
