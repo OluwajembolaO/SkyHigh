@@ -32,7 +32,6 @@ def login():
         if not (check and check_password_hash(check[0][2], password)): return "Incorrect username or password"
 
         current_username = username
-        print(current_username)
         return redirect("/")
     return render_template("login.html")
 
@@ -54,21 +53,14 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/whiteboard")
+@app.route("/whiteboard", methods=['GET', 'POST'])
 def whiteboard():
-    return render_template("whiteboard.html")
-
-@app.route("/getImage", methods=['GET', 'POST'])
-def get_image():
     if request.method == 'POST':
-        story = request.form.get('story')
-        image = generateImage(story, current_username)
-        print(image)
+        story = request.form.get("story")
+        url = generateImage(story)
 
-        return render_template('whiteboard.html', story=story, image=image)
-    print("NO IMAGE")
-    return render_template('whiteboard.html')
-
+        return render_template("whiteboard.html", image=url)
+    return render_template("whiteboard.html")
 
 @app.route('/therapy', methods=['POST'])
 def find_therapy():
@@ -84,6 +76,7 @@ def find_therapy():
         return jsonify({'error': 'No therapists found nearby.'}), 404
 
     return jsonify(therapies)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

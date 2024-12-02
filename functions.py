@@ -71,7 +71,7 @@ def fetch_therapy_data(location):
         therapies = {}
 
         # Loop through businesses and extract relevant info
-        for i, business in enumerate(data.get('businesses', [])):
+        for business in data.get('businesses', []):
             therapy_name = business.get("name", "N/A")  # Create a unique name for each therapy place
 
             # Extract relevant details for each business
@@ -133,9 +133,10 @@ def upload_image_to_imgbb(image_url, api_key):
         print(f"Error: {result['error']['message']}")
         return None
     
-def generateImage(user_input, current_username):
+def generateImage(user_input):
     con = sqlite3.connect("mental.db", check_same_thread=False)
     cur = con.cursor()
+
     result = theBot.images.generate(
         model="dalle3",
         prompt=user_input,
@@ -146,24 +147,8 @@ def generateImage(user_input, current_username):
     response = requests.get(imageURL)
     img = Image.open(BytesIO(response.content))
     img.save('generated_image.jpg')
-    
-    # Retrieve the user ID correctly
-    user_id = cur.execute('SELECT id FROM users WHERE username = ?', (current_username,)).fetchone()
-    if user_id is None:
-        raise ValueError("User not found in the database.")
-    
-    # Fetchone returns a tuple, so extract the first element
-    user_id = user_id[0]
-    
-    # Insert into the database
-    cur.execute('''
-    INSERT INTO images (user_id, images)
-    VALUES (?, ?)
-    ''', (user_id, upload_image_to_imgbb(imageURL, IMGBB_API_KEY)))
-    con.commit()
  
     return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
-
 
 
 def login_required(f):
