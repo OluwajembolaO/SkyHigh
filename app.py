@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session, jsonify
+from flask import Flask, redirect, render_template, request, jsonify
 import sqlite3
 
 from functions import create_databases, fetch_therapy_data, generateImage, login_required, qotd
@@ -13,8 +13,9 @@ create_databases()
 
 q = qotd()
 
-@app.route("/")
+current_username = ""
 
+@app.route("/")
 def home():
     return render_template("index.html", qu=q)
 
@@ -29,6 +30,7 @@ def login():
         check = cur.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
         if not (check and check_password_hash(check[0][2], password)): return "Incorrect username or password"
 
+        current_username = username
         return redirect("/")
     return render_template("login.html")
 
@@ -51,7 +53,6 @@ def register():
 
 
 @app.route('/therapy', methods=['POST'])
-@login_required
 def find_therapy():
     data = request.get_json()
     if data['location'] == "" or 'location' not in data:
