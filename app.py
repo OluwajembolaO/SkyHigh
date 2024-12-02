@@ -53,6 +53,14 @@ def register():
     return render_template("register.html")
 
 
+@app.route("/whiteboard")
+def whiteboard():
+    return render_template("whiteboard.html")
+
+@app.route("/getImage", methods=['GET', 'POST'])
+def get_image():
+    data = request.get_json()
+
 @app.route('/therapy', methods=['POST'])
 def find_therapy():
     data = request.get_json()
