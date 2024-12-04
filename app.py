@@ -1,37 +1,39 @@
-from flask import Flask, redirect, render_template, request, jsonify
+from flask import Flask, redirect, render_template, request, jsonify, session
+from flask_session import Session
 import sqlite3
 
 from functions import create_databases, fetch_therapy_data, generateImage, login_required, qotd
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 con = sqlite3.connect("mental.db", check_same_thread=False)
 cur = con.cursor()
-
 create_databases()
 
 q = qotd()
 
-current_username = ""
-
 @app.route("/")
+@login_required
 def home():
     return render_template("index.html", qu=q)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    current_username = ""
+    session.clear()
     if request.method == "POST":
         username = request.form.get("username").rstrip()
         password = request.form.get("password")
 
-        if not (username and password): return "Fill out all fields"
+        if not (username and password): return render_template("error.html", error="Fill out all required fields!")
         
         check = cur.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
-        if not (check and check_password_hash(check[0][2], password)): return "Incorrect username or password"
+        if not (check and check_password_hash(check[0][2], password)): return render_template("error.html", error="Incorrect username or password!")
 
-        current_username = username
+        session["user_id"] = check[0][0]
         return redirect("/")
     return render_template("login.html")
 
@@ -42,11 +44,11 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmpassword")
 
-        if not (username and password and confirmation): return "Fill out all fields"
-        if password != confirmation: return "Password does not match retyped password"
+        if not (username and password and confirmation): return render_template("error.html", error="Fill out all required fields!")
+        if password != confirmation: return render_template("error.html", error="Password does not match retyped password!")
 
         try: cur.execute("INSERT INTO users (username, hash_password) VALUES (?, ?)", (username, generate_password_hash(password)))
-        except sqlite3.IntegrityError: return "Username taken"
+        except sqlite3.IntegrityError: return render_template("error.html", error="Username already taken!")
 
         con.commit()
         return redirect("/login")
