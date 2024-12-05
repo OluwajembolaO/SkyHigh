@@ -1,4 +1,5 @@
 import base64
+from datetime import datetime
 from flask import redirect, session
 from functools import wraps
 from io import BytesIO
@@ -38,7 +39,7 @@ def create_databases():
     cur.execute('''
         CREATE TABLE IF NOT EXISTS quotes (
             id INTEGER PRIMARY KEY NOT NULL,
-            date DATE DEFAULT CURRENT_DATE,
+            date DATE,
             quote TEXT NOT NULL,
             author TEXT NOT NULL
         )
@@ -166,10 +167,20 @@ def login_required(f):
 
 
 def qotd():
+    con = sqlite3.connect("mental.db", check_same_thread=False)
+    cur = con.cursor()
+
+    today = datetime.today().strftime("%Y-%m-%d")
+    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (today, )).fetchone()
+    if quote: return f'"{quote[0]}" — {quote[1]}'
+
     response = requests.get("https://zenquotes.io/api/today")
     if response.status_code == 200:
         data = response.json()
+
+        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (today, data[0]["q"], data[0]["a"]))
         s = f'"{data[0]["q"]}" — {data[0]["a"]}'
+
+        con.commit()
         return s
-    else:
-        return "Error occured"
+    else: return None
