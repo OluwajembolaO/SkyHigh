@@ -58,6 +58,11 @@ def home():
     if not q: return render_template("error.html", error="Sorry! Something is wrong with the quote API!")
     return render_template("index.html", qu=q, user=username[0])
 
+@app.route('/gallery', methods=['GET', 'POST'])
+@login_required
+def gallery():
+    return render_template("gallery.html")
+
 
 @app.route("/whiteboard", methods=['GET', 'POST'])
 @login_required
