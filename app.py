@@ -19,7 +19,8 @@ q = qotd()
 @app.route("/")
 @login_required
 def home():
-    return render_template("index.html", qu=q)
+    username = cur.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    return render_template("temp.html", qu=q, user=username[0])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -57,12 +58,13 @@ def register():
 
 @app.route("/whiteboard", methods=['GET', 'POST'])
 def whiteboard():
+    username = cur.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],)).fetchone()
     if request.method == 'POST':
         story = request.form.get("story")
         url = generateImage(story)
 
-        return render_template("whiteboard.html", image=url)
-    return render_template("whiteboard.html")
+        return render_template("whiteboard.html", image=url, user=username[0])
+    return render_template("whiteboard.html", user=username[0])
 
 @app.route('/therapy', methods=['POST'])
 def find_therapy():

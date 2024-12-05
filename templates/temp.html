@@ -1,0 +1,165 @@
+{% extends "main-layout.html" %}
+
+{% block title %} SkyHigh {% endblock %}
+
+{% block navbar %}
+    <li class="nav-item"><a class="nav-link">Welcome, {{ user }}!</a></li>
+    <li class="nav-item"><a class="nav-link click-scroll" href="#">Home</a></li>
+    <li class="nav-item"><a class="nav-link click-scroll" href="#therapy">Find Therapists</a></li>
+{% endblock %}
+
+{% block main %}
+    <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-12 mx-auto">
+                    <h1 class="text-white text-center">Elevate Your Mind, Find Your Peace.</h1>
+                    <h6 class="text-center">A Platform to Embrace Wellness.</h6>
+                </div>
+
+                <div class="col-12 text-center mt-5"><h3 class="mb-2 text-light-grey"><b>Quote of the Day</b></h4></div>
+                <h4 class="mb-0 text-center text-light-grey">{{ qu }}</h5> 
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-section">
+        <div class="container">
+            <div class="row justify-content-center">
+
+                <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                    <div class="custom-block bg-white shadow-lg">
+                        <div class="d-flex">
+                            <div>
+                                <h5 class="mb-2">Who We Are</h5>
+                                <p class="mb-0">Sky High is a platform dedicated to promoting mental wellness, fostering creativity, and connecting individuals to resources that inspire peace and personal growth.</p>
+                            </div>
+
+                        </div>
+
+                        <img src="../static/img/mental-health-treatment.jpg" class="custom-block-image img-fluid" alt="">
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-12">
+                    <div class="custom-block custom-block-overlay">
+                        <div class="d-flex flex-column h-100">
+                            <img src="../static/img/white-cat-image.jpg" class="custom-block-image img-fluid" alt="">
+
+                            <div class="custom-block-overlay-text d-flex">
+                                <div>
+                                    <h5 class="text-white mb-2">Whiteboard (Gallery Coming Soon)</h5>
+                                    <p class="text-white">The Whiteboard allows you to generate all of your feelings into an image</p>
+                                    <a href="/whiteboard" class="btn custom-btn mt-2 mt-lg-3">Write</a>
+                                </div>
+                            </div>
+
+                            <div class="section-overlay"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="therapy-section section-padding section-bg" id="therapist">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12 col-12 text-center"><h2 class="mb-5">Find Therapists Near You!</h2></div>
+
+                <div class="col-lg-6 col-12 mx-auto">
+                    <form id="searchForm">
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Enter your location:</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="City, State or ZIP">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </form>                            
+                </div>
+            </div>
+
+            <div class="row mt-5" id="resultsSection" style="display: none;">
+                {% if error %}
+                    <p class="text-center text-danger">{{ error }}</p>
+                {% elif data %}
+                    <h2 class="text-center mb-4">Top 5 Therapists Near Your Area</h2>
+                    <div class="row">
+                        {% for name, details in data.items() %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card">
+                                    <img src="{{ details.image_url }}" class="card-img-top" alt="{{ name }}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ name }}</h5>
+                                        <p><strong>Address:</strong> {{ details.location }}</p>
+                                        <p><strong>Phone:</strong> {{ details.PhoneNumber }}</p>
+                                        <p><strong>Rating:</strong> {{ details.rating }} ({{ details.review_count }} reviews)</p>
+                                        <a href="{{ details.url }}" class="btn btn-primary" target="_blank">Visit Now!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-danger">No therapists found nearby.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            const location = document.getElementById('location').value.trim();
+            const resultsSection = document.getElementById('resultsSection');
+
+            // Clear results section and show it
+            resultsSection.style.display = 'block';
+            resultsSection.innerHTML = '<p class="text-center">Loading...</p>';
+
+            fetch('/therapy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ location }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    resultsSection.innerHTML = ''; // Clear loading message
+
+                    if (data.error) {
+                        resultsSection.innerHTML = `<p class="text-center text-danger">${data.error}</p>`;
+                    } else if (Object.keys(data).length > 0) {
+                        let html = '<h2 class="text-center mb-4">Therapists Near Your Area</h2><div class="row">';
+                        for (const [name, details] of Object.entries(data)) {
+                            html += `
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card">
+                                        <img src="${details.image_url}" class="card-img-top" alt="${name}" style="height: 200px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${name}</h5>
+                                            <p><strong>Address:</strong> ${details.location}</p>
+                                            <p><strong>Phone:</strong> ${details.PhoneNumber}</p>
+                                            <p><strong>Rating:</strong> ${details.rating} (${details.review_count} reviews)</p>
+                                            <a href="${details.url}" class="btn btn-primary" target="_blank">Visit Now!</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        html += '</div>';
+                        resultsSection.innerHTML = html;
+                    } else {
+                        resultsSection.innerHTML = '<p class="text-center text-danger">No therapists found nearby.</p>';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    resultsSection.innerHTML = '<p class="text-center text-danger">An error occurred. Please try again.</p>';
+                });
+        });
+    </script>
+{% endblock %}
