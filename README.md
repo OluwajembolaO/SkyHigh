@@ -13,6 +13,8 @@ Daily Inspirational Quote: Start your day with uplifting words to encourage mind
 
 User-Friendly Interface: A positive and clean user-interface where all tools are readily available and visible to the user.
 
+Gallery: Work in progress, and should be finished soon. <!-- Not gonna pull a GTA 6-->
+
 ## Tech Stack
 Frontend: HTML, CSS, Bootstrap, and JavaScript for a clean and responsive user interface.
 
@@ -25,9 +27,9 @@ Geolocation: Yelp Geolocation API for accurate location-based therapist searches
 Inspirational Quotes: ZenQuotes API for delivering daily inspirational quotes.
 
 ## Authors
-* Oluwajembola Orioke (Frontend/Backend Developer)
-* eefward (Frontend Developer)
-* GuestyTheBesty (Backend Developer)
+* Oluwajembola Orioke (Frontend/Backend Developer) <!-- Might be the goat -->
+* eefward (Frontend Developer) <!-- Decent at best (and might not be straight) -->
+* GuestyTheBesty (Backend Developer) <!-- Completely Straight -->
 
 ## How to run
 1. Install the required libaries (You need Python): $pip install -r requirements
