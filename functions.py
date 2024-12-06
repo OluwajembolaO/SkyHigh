@@ -12,11 +12,11 @@ import urllib.parse  # For URL encoding
 
 from secret import *
 
+con = sqlite3.connect("mental.db", check_same_thread=False)
+cur = con.cursor()
+
 
 def create_databases():
-    con = sqlite3.connect("mental.db", check_same_thread=False)
-    cur = con.cursor()
-
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY NOT NULL,
@@ -25,7 +25,6 @@ def create_databases():
             UNIQUE (username)
         )
     ''')
-
     cur.execute('''
         CREATE TABLE IF NOT EXISTS images (
             user_id INTEGER,
@@ -35,7 +34,6 @@ def create_databases():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
-
     cur.execute('''
         CREATE TABLE IF NOT EXISTS quotes (
             id INTEGER PRIMARY KEY NOT NULL,
@@ -44,9 +42,7 @@ def create_databases():
             author TEXT NOT NULL
         )
     ''')
-
     con.commit()
-    con.close()
 
 
 def fetch_therapy_data(location):
@@ -97,7 +93,53 @@ def fetch_therapy_data(location):
         return None
     
 
-theBot = AzureOpenAI(api_key=AZURE_OPENAI_API_KEY, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_version="2024-05-01-preview")
+def generateImage(user_input):
+    theBot = AzureOpenAI(api_key=AZURE_OPENAI_API_KEY, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_version="2024-05-01-preview")
+
+    result = theBot.images.generate(
+        model="dalle3",
+        prompt=user_input,
+        n=1,
+    )
+    
+    imageURL = json.loads(result.model_dump_json())['data'][0]['url']
+    response = requests.get(imageURL)
+    img = Image.open(BytesIO(response.content))
+    img.save('generated_image.jpg')
+ 
+    return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
+    
+
+def login_required(f):
+    """
+    Decorate routes to require login.
+
+    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def qotd():
+    today = datetime.today().strftime("%Y-%m-%d")
+    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (today, )).fetchone()
+    if quote: return f'"{quote[0]}" — {quote[1]}'
+
+    response = requests.get("https://zenquotes.io/api/today")
+    if response.status_code == 200:
+        data = response.json()
+
+        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (today, data[0]["q"], data[0]["a"]))
+        s = f'"{data[0]["q"]}" — {data[0]["a"]}'
+
+        con.commit()
+        return s
+    else: return None
+
 
 def upload_image_to_imgbb(image_url, api_key):
     # Step 1: Download the image from the given URL
@@ -133,54 +175,3 @@ def upload_image_to_imgbb(image_url, api_key):
     else:
         print(f"Error: {result['error']['message']}")
         return None
-    
-def generateImage(user_input):
-    con = sqlite3.connect("mental.db", check_same_thread=False)
-    cur = con.cursor()
-
-    result = theBot.images.generate(
-        model="dalle3",
-        prompt=user_input,
-        n=1,
-    )
-    
-    imageURL = json.loads(result.model_dump_json())['data'][0]['url']
-    response = requests.get(imageURL)
-    img = Image.open(BytesIO(response.content))
-    img.save('generated_image.jpg')
- 
-    return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
-
-
-def login_required(f):
-    """
-    Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
-            return redirect("/login")
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-def qotd():
-    con = sqlite3.connect("mental.db", check_same_thread=False)
-    cur = con.cursor()
-
-    today = datetime.today().strftime("%Y-%m-%d")
-    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (today, )).fetchone()
-    if quote: return f'"{quote[0]}" — {quote[1]}'
-
-    response = requests.get("https://zenquotes.io/api/today")
-    if response.status_code == 200:
-        data = response.json()
-
-        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (today, data[0]["q"], data[0]["a"]))
-        s = f'"{data[0]["q"]}" — {data[0]["a"]}'
-
-        con.commit()
-        return s
-    else: return None
