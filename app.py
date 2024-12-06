@@ -104,8 +104,9 @@ def whiteboard():
             return render_template("error.html", error="Story likely contains profanity, reword your story :P")
         
         url = generateImage(story)
+        if not url: return render_template("error.html", error="Sorry! Something is wrong with the image API!")
 
-        cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?)"
+        cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)"
                     (session["user_id"], url, story, date()))
         con.commit()
 
