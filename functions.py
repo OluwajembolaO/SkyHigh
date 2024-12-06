@@ -18,6 +18,42 @@ cur = con.cursor()
 
 def create_databases():
     cur.execute('''
+        CREATE TABLE IF NOT EXISTS comment_details (
+            id INTEGER PRIMARY KEY NOT NULL,
+            image_id INTEGER,
+            comment VARCHAR(500) NOT NULL,
+            FOREIGN KEY(image_id) REFERENCES users(images)
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS images (
+            id INTEGER PRIMARY KEY NOT NULL,
+            user_id INTEGER,
+            url TEXT NOT NULL,
+            description VARCHAR(500) NOT NULL,
+            date DATE NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS image_details (
+            id INTEGER PRIMARY KEY NOT NULL,
+            image_id INTEGER,
+            views INTEGER,
+            likes INTEGER,
+            comments INTEGER,
+            FOREIGN KEY(image_id) REFERENCES users(images)
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS quotes (
+            id INTEGER PRIMARY KEY NOT NULL,
+            date DATE NOT NULL,
+            quote TEXT NOT NULL,
+            author TEXT NOT NULL
+        )
+    ''')
+    cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY NOT NULL,
             username TEXT NOT NULL,
@@ -25,24 +61,11 @@ def create_databases():
             UNIQUE (username)
         )
     ''')
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS images (
-            user_id INTEGER,
-            id INTEGER PRIMARY KEY NOT NULL,
-            images TEXT NOT NULL,
-            date DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-    ''')
-    cur.execute('''
-        CREATE TABLE IF NOT EXISTS quotes (
-            id INTEGER PRIMARY KEY NOT NULL,
-            date DATE,
-            quote TEXT NOT NULL,
-            author TEXT NOT NULL
-        )
-    ''')
     con.commit()
+
+
+def date():
+    return datetime.today().strftime("%Y-%m-%d")
 
 
 def fetch_therapy_data(location):
@@ -125,15 +148,14 @@ def login_required(f):
 
 
 def qotd():
-    today = datetime.today().strftime("%Y-%m-%d")
-    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (today, )).fetchone()
+    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (date(), )).fetchone()
     if quote: return f'"{quote[0]}" — {quote[1]}'
 
     response = requests.get("https://zenquotes.io/api/today")
     if response.status_code == 200:
         data = response.json()
 
-        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (today, data[0]["q"], data[0]["a"]))
+        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (date(), data[0]["q"], data[0]["a"]))
         s = f'"{data[0]["q"]}" — {data[0]["a"]}'
 
         con.commit()

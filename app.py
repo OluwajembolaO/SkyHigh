@@ -1,8 +1,9 @@
 from flask import Flask, redirect, render_template, request, jsonify, session
 from flask_session import Session
+from profanity_check import predict
 import sqlite3
 
-from functions import create_databases, fetch_therapy_data, generateImage, login_required, qotd
+from functions import create_databases, date, fetch_therapy_data, generateImage, login_required, qotd
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -20,7 +21,8 @@ create_databases()
 def find_therapy():
     data = request.get_json()
 
-    if data['location'] == "" or 'location' not in data: return jsonify({'error': 'Location is required.'}), 400
+    if data['location'] == "" or 'location' not in data: 
+        return jsonify({'error': 'Location is required.'}), 400
     location = data['location']
 
     therapies = fetch_therapy_data(location)
@@ -38,7 +40,8 @@ def gallery():
 @app.route("/")
 @login_required
 def home():
-    username = cur.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    username = cur.execute("SELECT username FROM users WHERE id = ?", 
+                           (session["user_id"],)).fetchone()
     if not username: return redirect("/login")
 
     q = qotd()
@@ -53,10 +56,16 @@ def login():
         username = request.form.get("username").rstrip()
         password = request.form.get("password")
 
-        if not (username and password): return render_template("error.html", error="Fill out all required fields!")
-        
+        if not (username and password): 
+            return render_template("error.html", error="Fill out all required fields!")
+        if len(username) > 25: 
+            return render_template("error.html", error="Username exceeds 25 characters!")
+        if predict([username])[0] > .5: 
+            return render_template("error.html", error="Username likely contains profanity, choose another username >:(")
+
         check = cur.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
-        if not (check and check_password_hash(check[0][2], password)): return render_template("error.html", error="Incorrect username or password!")
+        if not (check and check_password_hash(check[0][2], password)): 
+            return render_template("error.html", error="Incorrect username or password!")
 
         session["user_id"] = check[0][0]
         return redirect("/")
@@ -70,8 +79,10 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmpassword")
 
-        if not (username and password and confirmation): return render_template("error.html", error="Fill out all required fields!")
-        if password != confirmation: return render_template("error.html", error="Password does not match retyped password!")
+        if not (username and password and confirmation): 
+            return render_template("error.html", error="Fill out all required fields!")
+        if password != confirmation: 
+            return render_template("error.html", error="Password does not match retyped password!")
 
         try: cur.execute("INSERT INTO users (username, hash_password) VALUES (?, ?)", (username, generate_password_hash(password)))
         except sqlite3.IntegrityError: return render_template("error.html", error="Username already taken!")
@@ -84,10 +95,19 @@ def register():
 @app.route("/whiteboard", methods=['GET', 'POST'])
 @login_required
 def whiteboard():
-    username = cur.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    username = cur.execute("SELECT username FROM users WHERE id = ?", 
+                           (session["user_id"],)).fetchone()
+    
     if request.method == 'POST':
         story = request.form.get("story")
+        if predict([story])[0] > .5: 
+            return render_template("error.html", error="Story likely contains profanity, reword your story :P")
+        
         url = generateImage(story)
+
+        cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?)"
+                    (session["user_id"], url, story, date()))
+        con.commit()
 
         return render_template("whiteboard.html", image=url, user=username[0])
     return render_template("whiteboard.html", user=username[0])
