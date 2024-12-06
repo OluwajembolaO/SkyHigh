@@ -30,11 +30,14 @@ Inspirational Quotes: ZenQuotes API for delivering daily inspirational quotes.
 * GuestyTheBesty (Backend Developer)
 
 ## How to run
-1. Install the required libaries (You need Python): $pip install -r requirements 
+1. Install the required libaries (You need Python): $pip install -r requirements
+<br></br>
+2. Create a "secret.py" file with your own keys
 
-2. Create a "secret.py" file with your own keys:
-Azure OpenAI: https://learn.microsoft.com/en-us/azure/api-management/api-management-authenticate-authorize-azure-openai
-Yelp Geolocation: https://docs.developer.yelp.com/reference/v3_business_search
-ImgBB: https://api.imgbb.com/
+* Azure OpenAI: https://learn.microsoft.com/en-us/azure/api-management/api-management-authenticate-authorize-azure-openai
 
+* Yelp Geolocation: https://docs.developer.yelp.com/reference/v3_business_search
+
+* ImgBB: https://api.imgbb.com/
+<br></br>
 3. Run: $python app.py
