@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, jsonify, session
 from flask_session import Session
-from profanity_check import predict
+from profanity import profanity
 import sqlite3
 
 from functions import create_databases, date, fetch_therapy_data, generateImage, login_required, qotd
@@ -58,10 +58,6 @@ def login():
 
         if not (username and password): 
             return render_template("error.html", error="Fill out all required fields!")
-        if len(username) > 25: 
-            return render_template("error.html", error="Username exceeds 25 characters!")
-        if predict([username])[0] > .5: 
-            return render_template("error.html", error="Username likely contains profanity, choose another username >:(")
 
         check = cur.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
         if not (check and check_password_hash(check[0][2], password)): 
@@ -81,6 +77,10 @@ def register():
 
         if not (username and password and confirmation): 
             return render_template("error.html", error="Fill out all required fields!")
+        if len(username) > 25: 
+            return render_template("error.html", error="Username exceeds 25 characters!")
+        if profanity.contains_profanity(username): 
+            return render_template("error.html", error="Username likely contains profanity, choose another username >:(")
         if password != confirmation: 
             return render_template("error.html", error="Password does not match retyped password!")
 
@@ -100,13 +100,13 @@ def whiteboard():
     
     if request.method == 'POST':
         story = request.form.get("story")
-        if predict([story])[0] > .5: 
+        if profanity.contains_profanity(story): 
             return render_template("error.html", error="Story likely contains profanity, reword your story :P")
         
         url = generateImage(story)
         if not url: return render_template("error.html", error="Sorry! Something is wrong with the image API!")
 
-        cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)"
+        cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)",
                     (session["user_id"], url, story, date()))
         con.commit()
 
