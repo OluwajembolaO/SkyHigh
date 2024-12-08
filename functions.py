@@ -127,7 +127,6 @@ def generateImage(user_input):
     
     imageURL = json.loads(result.model_dump_json())['data'][0]['url']
     response = requests.get(imageURL)
-    img = Image.open(BytesIO(response.content))
  
     return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
     
