@@ -10,36 +10,36 @@
         <div class="btn-group d-flex" role="group" aria-label="Basic radio toggle button group">
           
           <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="btnradio1">Username</label>
+          <label class="btn btn-outline-primary" for="btnradio1" name="search">Username</label>
           <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-          <label class="btn btn-outline-primary" for="btnradio2">Description</label>
+          <label class="btn btn-outline-primary" for="btnradio2" name="search">Description</label>
   
           <input class="form-control" id="search" placeholder="Username" style="flex-grow: 1;margin-left: 10px;">
-          
+
           <div class="dropdown" style="margin-right: 10px">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Sort by
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Newest</a></li>
-              <li><a class="dropdown-item" href="#">Oldest</a></li>
+              <li class="dropdown-item">Newest</li>
+              <li class="dropdown-item">Oldest</li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Views</a></li>
-              <li><a class="dropdown-item" href="#">Likes</a></li>
-              <li><a class="dropdown-item" href="#">Comments</a></li>
+              <li class="dropdown-item">Views</li>
+              <li class="dropdown-item">Likes</li>
+              <li class="dropdown-item">Comments</li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Username</a></li>
-              <li><a class="dropdown-item" href="#">Description</a></li>
+              <li class="dropdown-item">Username</li>
+              <li class="dropdown-item">Description</li>
+              <li><hr class="dropdown-divider"></li>
+              <li id="current" name="current" class="notquite" style="background-color: #63C5DA;">Newest</li>
             </ul>
           </div>
-  
+
           <button type="submit" class="btn btn-primary">Search</button>
-  
         </div>
       </div>
     </section>
   </form>
-  
 
   <script>
     let username = document.getElementById('btnradio1');
@@ -51,6 +51,16 @@
     });
     description.addEventListener('click', function() {
       search.placeholder='Description';
+    });
+  </script>
+  <script>
+    let sortOptions = document.querySelectorAll('.dropdown-item');
+    let current = document.getElementById('current')
+
+    sortOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        current.innerHTML = option.textContent;
+      });
     });
   </script>
 {% endblock %}

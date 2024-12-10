@@ -34,6 +34,11 @@ def find_therapy():
 @app.route('/gallery', methods=['GET', 'POST'])
 @login_required
 def gallery():
+    if request.method == "POST":
+        search_by = request.form.get("search")
+        sort_by = request.form.get("current")
+        
+        return render_template("gallery.html")
     return render_template("gallery.html")
 
 
