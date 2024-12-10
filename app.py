@@ -39,7 +39,11 @@ def gallery():
         sort_by = request.form.get("current")
         
         return render_template("gallery.html")
-    return render_template("gallery.html")
+    data = cur.execute('''
+                SELECT url, description, date FROM images
+                ORDER BY date DESC
+            ''').fetchall()
+    return render_template("gallery.html", data=data)
 
 
 @app.route("/")

@@ -145,6 +145,7 @@ def login_required(f):
 
 
 def qotd():
+    # the same quote might appear for 2 dates because the quotes refresh at around 9 pm
     quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (date(), )).fetchone()
     if quote: return f'"{quote[0]}" — {quote[1]}'
 
