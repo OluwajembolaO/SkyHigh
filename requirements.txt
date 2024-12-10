@@ -1,7 +1,7 @@
-Flask==2.2.3
-Flask-Session==0.4.0
-openai==0.27.0
-Pillow==9.3.0
-profanity==1.0.4
-requests==2.28.2
-werkzeug==2.2.3
+Flask==3.1.0
+Flask-Session==0.8.0
+openai==1.57.1
+Pillow==11.0.0
+profanity==1.1
+requests==2.32.3
+werkzeug==3.1.3

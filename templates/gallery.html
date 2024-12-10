@@ -3,43 +3,57 @@
 {% block title %} SkyHigh {% endblock %}
 
 {% block main %}
-  <form>
+  
     <section class="section-padding section-bg">
       <div class="container" style="margin-top: 50px;">
-    
-        <div class="btn-group d-flex" role="group" aria-label="Basic radio toggle button group">
+        
+        <form action="/gallery" method="post">
+          <div class="btn-group d-flex" role="group" aria-label="Basic radio toggle button group">
           
-          <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="btnradio1" name="search">Username</label>
-          <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-          <label class="btn btn-outline-primary" for="btnradio2" name="search">Description</label>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="btnradio1" name="search">Username</label>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnradio2" name="search">Description</label>
+    
+            <input class="form-control" id="search" placeholder="Username" style="flex-grow: 1;margin-left: 10px;">
   
-          <input class="form-control" id="search" placeholder="Username" style="flex-grow: 1;margin-left: 10px;">
-
-          <div class="dropdown" style="margin-right: 10px">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Sort by
-            </a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item">Newest</li>
-              <li class="dropdown-item">Oldest</li>
-              <li><hr class="dropdown-divider"></li>
-              <li class="dropdown-item">Views</li>
-              <li class="dropdown-item">Likes</li>
-              <li class="dropdown-item">Comments</li>
-              <li><hr class="dropdown-divider"></li>
-              <li class="dropdown-item">Username</li>
-              <li class="dropdown-item">Description</li>
-              <li><hr class="dropdown-divider"></li>
-              <li id="current" name="current" class="notquite" style="background-color: #63C5DA;">Newest</li>
-            </ul>
+            <div class="dropdown" style="margin-right: 10px">
+              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Sort by
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item">Newest</li>
+                <li class="dropdown-item">Oldest</li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-item">Views</li>
+                <li class="dropdown-item">Likes</li>
+                <li class="dropdown-item">Comments</li>
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-item">Username</li>
+                <li class="dropdown-item">Description</li>
+                <li><hr class="dropdown-divider"></li>
+                <li id="current" name="current" class="notquite" style="background-color: #63C5DA;">Newest</li>
+              </ul>
+            </div>
+  
+            <button type="submit" class="btn btn-primary">Search</button>
           </div>
-
-          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      
+        <div class="container grids">
+          {% for image in data %}
+            <div>
+              <img src="{{ image[0] }}">
+              <hr>
+              <p>{{ image[1] }}</p>
+              <p>{{ image[2] }}</p>
+            </div>
+          {% endfor %}
         </div>
+        
       </div>
     </section>
-  </form>
+
 
   <script>
     let username = document.getElementById('btnradio1');

@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, redirect, render_template, request, jsonify, session
 from flask_session import Session
 from profanity import profanity
@@ -37,6 +38,17 @@ def gallery():
     if request.method == "POST":
         search_by = request.form.get("search")
         sort_by = request.form.get("current")
+        
+        data = ""
+        match sort_by:
+            case "Newest":...
+            case "Oldest":...
+            case "Views":...
+            case "Likes":...
+            case "Comments":...
+            case "Username":...
+            case "Description":...
+            case _: return render_template("error.html", error="Stop html hacking pleasease")
         
         return render_template("gallery.html")
     data = cur.execute('''
@@ -116,7 +128,7 @@ def whiteboard():
         if not url: return render_template("error.html", error="Sorry! Something is wrong with the image API!")
 
         cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)",
-                    (session["user_id"], url, story, date()))
+                    (session["user_id"], url, story, datetime.now()))
         con.commit()
 
         return render_template("whiteboard.html", image=url, user=username[0])

@@ -1,11 +1,8 @@
 import base64
-from datetime import datetime
 from flask import redirect, session
 from functools import wraps
-from io import BytesIO
 import json
 from openai import AzureOpenAI
-from PIL import Image
 import requests
 import sqlite3
 import urllib.parse  # For URL encoding
@@ -31,7 +28,7 @@ def create_databases():
             user_id INTEGER,
             url TEXT NOT NULL,
             description VARCHAR(500) NOT NULL,
-            date DATE NOT NULL,
+            date DATETIME NOT NULL,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
@@ -62,10 +59,6 @@ def create_databases():
         )
     ''')
     con.commit()
-
-
-def date():
-    return datetime.today().strftime("%Y-%m-%d")
 
 
 def fetch_therapy_data(location):
@@ -122,7 +115,7 @@ def generateImage(user_input):
     result = theBot.images.generate(
         model="dalle3",
         prompt=user_input,
-        n=1,
+        n=1
     )
     
     imageURL = json.loads(result.model_dump_json())['data'][0]['url']
