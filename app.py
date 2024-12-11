@@ -4,7 +4,7 @@ from flask_session import Session
 from profanity import profanity
 import sqlite3
 
-from functions import create_databases, date, fetch_therapy_data, generateImage, login_required, qotd
+from functions import create_databases, fetch_therapy_data, generateImage, login_required, time, qotd
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -12,7 +12,12 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-con = sqlite3.connect("mental.db", check_same_thread=False)
+# timeout=100 because image ai would take so long the database would lock itself
+con = sqlite3.connect(
+    "mental.db", 
+    check_same_thread=False, 
+    timeout=100
+)
 cur = con.cursor()
 create_databases()
 
@@ -67,6 +72,7 @@ def home():
 
     q = qotd()
     if not q: return render_template("error.html", error="Sorry! Something is wrong with the quote API!")
+
     return render_template("index.html", qu=q, user=username[0])
 
 
@@ -118,19 +124,21 @@ def register():
 def whiteboard():
     username = cur.execute("SELECT username FROM users WHERE id = ?", 
                            (session["user_id"],)).fetchone()
-    
     if request.method == 'POST':
         story = request.form.get("story")
         if profanity.contains_profanity(story): 
             return render_template("error.html", error="Story likely contains profanity, reword your story :P")
+        if len(story) > 500:
+            return render_template("error.html", error="Story exceeds 500 characters!")
         
         url = generateImage(story)
-        if not url: return render_template("error.html", error="Sorry! Something is wrong with the image API!")
+        if "https://i.ibb.co/" not in url: 
+            return render_template("error.html", error="Sorry! Something is wrong! Try to change up the words!")
 
         cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)",
-                    (session["user_id"], url, story, datetime.now()))
+                    (session["user_id"], url, story, time()))
+        
         con.commit()
-
         return render_template("whiteboard.html", image=url, user=username[0])
     return render_template("whiteboard.html", user=username[0])
 

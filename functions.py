@@ -1,8 +1,9 @@
 import base64
-from flask import redirect, session
+from datetime import datetime
+from flask import redirect, session, render_template
 from functools import wraps
 import json
-from openai import AzureOpenAI
+from openai import AzureOpenAI, BadRequestError
 import requests
 import sqlite3
 import urllib.parse  # For URL encoding
@@ -53,12 +54,16 @@ def create_databases():
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY NOT NULL,
-            username TEXT NOT NULL,
+            username VARCHAR(25) NOT NULL,
             hash_password TEXT NOT NULL,
             UNIQUE (username)
         )
     ''')
     con.commit()
+
+
+def time():
+    return datetime.now()
 
 
 def fetch_therapy_data(location):
@@ -112,11 +117,14 @@ def fetch_therapy_data(location):
 def generateImage(user_input):
     theBot = AzureOpenAI(api_key=AZURE_OPENAI_API_KEY, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_version="2024-05-01-preview")
 
-    result = theBot.images.generate(
-        model="dalle3",
-        prompt=user_input,
-        n=1
-    )
+    try:
+        result = theBot.images.generate(
+            model="dalle3",
+            prompt=user_input,
+            n=1
+        )
+    except BadRequestError as e:
+        return render_template("error.html", error=e)
     
     imageURL = json.loads(result.model_dump_json())['data'][0]['url']
  
@@ -139,14 +147,15 @@ def login_required(f):
 
 def qotd():
     # the same quote might appear for 2 dates because the quotes refresh at around 9 pm
-    quote = cur.execute("SELECT quote, author FROM quotes WHERE date = ?", (date(), )).fetchone()
+    formatted_date = time().strftime("%Y-%m-%d") + "%"
+    quote = cur.execute("SELECT quote, author FROM quotes WHERE date LIKE ?", (formatted_date, )).fetchone()
     if quote: return f'"{quote[0]}" — {quote[1]}'
 
     response = requests.get("https://zenquotes.io/api/today")
     if response.status_code == 200:
         data = response.json()
 
-        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (date(), data[0]["q"], data[0]["a"]))
+        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (time(), data[0]["q"], data[0]["a"]))
         s = f'"{data[0]["q"]}" — {data[0]["a"]}'
 
         con.commit()

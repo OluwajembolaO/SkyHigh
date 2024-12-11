@@ -2,6 +2,10 @@
 
 {% block title %} Whiteboard {% endblock %}
 
+{% block navbar %}
+    <li class="nav-item"><a class="nav-link click-scroll" href="/gallery">Gallery</a></li>
+{% endblock %}
+
 {% block main %}
     <section class="therapy-section section-padding section-bg" id="therapy">
         <div class="container">
@@ -18,7 +22,7 @@
                     {% endif %}
                 </div>
 
-                <div class="mb-3"><input type="text" class="form-control" id="story" name="story" placeholder="Write about your day!" required></div>
+                <div class="mb-3"><input type="text" class="form-control" id="story" name="story" placeholder="Write about your day! (500 letters max)" required></div>
                 <button type="submit" class="btn btn-primary w-100">Submit Story</button>
             </form>
 

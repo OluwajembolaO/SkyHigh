@@ -2,6 +2,10 @@
 
 {% block title %} SkyHigh {% endblock %}
 
+{% block navbar %}
+    <li class="nav-item"><a class="nav-link click-scroll" href="/whiteboard">Whiteboard</a></li>
+{% endblock %}
+
 {% block main %}
   
     <section class="section-padding section-bg">
@@ -40,13 +44,13 @@
           </div>
         </form>
       
-        <div class="container grids">
+        <div class="container grids" style="margin-top: 50px;">
           {% for image in data %}
             <div>
               <img src="{{ image[0] }}">
               <hr>
-              <p>{{ image[1] }}</p>
-              <p>{{ image[2] }}</p>
+              <p><strong>Description: </strong>{{ image[1]|truncate(50) }}</p>
+              <p><strong>Date: </strong>{{ image[2][:10] }}</p>
             </div>
           {% endfor %}
         </div>
