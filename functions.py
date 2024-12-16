@@ -59,7 +59,7 @@ def create_databases():
         )
     ''')
     cur.execute('''
-        CREATE TRIGGER inserting_into_image_details
+        CREATE TRIGGER IF NOT EXISTS inserting_into_image_details 
         AFTER INSERT ON images
         FOR EACH ROW
         BEGIN

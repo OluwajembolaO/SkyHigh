@@ -26,9 +26,19 @@ create_databases()
 @login_required
 def details():
     data = request.get_json()
-    if not data: return render_template("error.html", error="Something happened!")
+    if not data: return "something happened"
 
-    return render_template("test.html", test=data)
+    url = data['url']
+    if not url: return "somethign happened again"
+
+    image_details = cur.execute('''
+        SELECT * FROM image_details 
+        WHERE id = (
+            SELECT id FROM images WHERE url = (?)
+        )
+    ''').fetchone()
+
+    return render_template("test.html", test=image_details)
 
 
 @app.route('/therapy', methods=['POST'])
@@ -66,9 +76,9 @@ def gallery():
         
         return render_template("gallery.html")
     data = cur.execute('''
-                SELECT url, description, date FROM images
-                ORDER BY date DESC
-            ''').fetchall()
+        SELECT url, description, date FROM images
+        ORDER BY date DESC
+    ''').fetchall()
     return render_template("gallery.html", data=data)
 
 
