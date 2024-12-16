@@ -47,7 +47,9 @@
         <div class="container grids" style="margin-top: 50px;">
           {% for image in data %}
             <div>
-              <img src="{{ image[0] }}">
+              <a class="send" data-url="{{ image[0] }}">
+                <img src="{{ image[0] }}" id="image">
+              </a>
               <hr>
               <p><strong>Description: </strong>{{ image[1]|truncate(50) }}</p>
               <p><strong>Date: </strong>{{ image[2][:10] }}</p>
@@ -57,7 +59,6 @@
         
       </div>
     </section>
-
 
   <script>
     let username = document.getElementById('btnradio1');
@@ -78,6 +79,22 @@
     sortOptions.forEach(option => {
       option.addEventListener('click', () => {
         current.innerHTML = option.textContent;
+      });
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.send').forEach(image => {
+      image.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        let url = this.getAttribute('data-url')
+
+        fetch('/details', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify({'url': url})
+        });
+
       });
     });
   </script>

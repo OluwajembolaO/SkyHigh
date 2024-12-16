@@ -22,6 +22,15 @@ cur = con.cursor()
 create_databases()
 
 
+@app.route('/details', methods=['POST'])
+@login_required
+def details():
+    data = request.get_json()
+    if not data: return render_template("error.html", error="Something happened!")
+
+    return render_template("test.html", test=data)
+
+
 @app.route('/therapy', methods=['POST'])
 @login_required
 def find_therapy():
