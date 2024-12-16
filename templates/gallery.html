@@ -56,6 +56,13 @@
             </div>
           {% endfor %}
         </div>
+
+        <div id="details" hidden>
+          <img>
+          <p id="title"></p>
+          <p id="description"></p>
+        </div>
+        <div id="dimming"></div>
         
       </div>
     </section>
@@ -93,6 +100,21 @@
           method: 'POST',
           headers: {'Content-Type': 'application/json',},
           body: JSON.stringify({'url': url})
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error); 
+            return;
+          }
+          
+          document.getElementById('details').hidden = false;
+          document.getElementById('title').textContent = data.title
+          document.getElementById('description').textContent = data.description
+        })
+        .catch(err => {
+          console.error('Error', err);
+          alert('an error occured');
         });
 
       });

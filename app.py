@@ -26,19 +26,23 @@ create_databases()
 @login_required
 def details():
     data = request.get_json()
-    if not data: return "something happened"
+    if not data: return jsonify({'error': 'no data'})
 
     url = data['url']
-    if not url: return "somethign happened again"
+    if not url: return jsonify({'error': 'no url'})
 
     image_details = cur.execute('''
         SELECT * FROM image_details 
         WHERE id = (
             SELECT id FROM images WHERE url = (?)
         )
-    ''').fetchone()
+    ''', (url, )).fetchone()
+    if not image_details: return jsonify({'error': 'not found'})
 
-    return render_template("test.html", test=image_details)
+    return jsonify({
+        'title': image_details[1],
+        'description': image_details[2]
+    })
 
 
 @app.route('/therapy', methods=['POST'])
