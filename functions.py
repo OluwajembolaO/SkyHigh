@@ -17,7 +17,7 @@ cur = con.cursor()
 def create_databases():
     cur.execute('''
         CREATE TABLE IF NOT EXISTS comment_details (
-            id INTEGER PRIMARY KEY NOT NULL,
+            id INTEGER PRIMARY KEY,
             image_id INTEGER,
             comment VARCHAR(500) NOT NULL,
             FOREIGN KEY(image_id) REFERENCES users(images)
@@ -25,7 +25,7 @@ def create_databases():
     ''')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS images (
-            id INTEGER PRIMARY KEY NOT NULL,
+            id INTEGER PRIMARY KEY,
             user_id INTEGER,
             url TEXT NOT NULL,
             description VARCHAR(500) NOT NULL,
@@ -35,17 +35,16 @@ def create_databases():
     ''')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS image_details (
-            id INTEGER PRIMARY KEY NOT NULL,
-            image_id INTEGER,
-            views INTEGER,
-            likes INTEGER,
-            comments INTEGER,
-            FOREIGN KEY(image_id) REFERENCES users(images)
+            id INTEGER PRIMARY KEY,
+            views INTEGER DEFAULT 0,
+            likes INTEGER DEFAULT 0,
+            comments INTEGER DEFAULT 0,
+            FOREIGN KEY(id) REFERENCES users(images)
         )
     ''')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS quotes (
-            id INTEGER PRIMARY KEY NOT NULL,
+            id INTEGER PRIMARY KEY,
             date DATE NOT NULL,
             quote TEXT NOT NULL,
             author TEXT NOT NULL
@@ -53,11 +52,19 @@ def create_databases():
     ''')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY NOT NULL,
+            id INTEGER PRIMARY KEY,
             username VARCHAR(25) NOT NULL,
             hash_password TEXT NOT NULL,
             UNIQUE (username)
         )
+    ''')
+    cur.execute('''
+        CREATE TRIGGER inserting_into_image_details
+        AFTER INSERT ON images
+        FOR EACH ROW
+        BEGIN
+            INSERT INTO image_details (id) VALUES (NEW.id);
+        END;
     ''')
     con.commit()
 
