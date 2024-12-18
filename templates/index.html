@@ -108,40 +108,40 @@
                 },
                 body: JSON.stringify({ location }),
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    resultsSection.innerHTML = ''; // Clear loading message
+            .then((response) => response.json())
+            .then((data) => {
+                resultsSection.innerHTML = ''; // Clear loading message
 
-                    if (data.error) {
-                        resultsSection.innerHTML = `<p class="text-center text-danger">${data.error}</p>`;
-                    } else if (Object.keys(data).length > 0) {
-                        let html = '<h2 class="text-center mb-4">Therapists Near Your Area</h2><div class="row">';
-                        for (const [name, details] of Object.entries(data)) {
-                            html += `
-                                <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card">
-                                        <img src="${details.image_url}" class="card-img-top" alt="${name}" style="height: 200px; object-fit: cover;">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${name}</h5>
-                                            <p><strong>Address:</strong> ${details.location}</p>
-                                            <p><strong>Phone:</strong> ${details.PhoneNumber}</p>
-                                            <p><strong>Rating:</strong> ${details.rating} (${details.review_count} reviews)</p>
-                                            <a href="${details.url}" class="btn btn-primary" target="_blank">Visit Now!</a>
-                                        </div>
+                if (data.error) {
+                    resultsSection.innerHTML = `<p class="text-center text-danger">${data.error}</p>`;
+                } else if (Object.keys(data).length > 0) {
+                    let html = '<h2 class="text-center mb-4">Therapists Near Your Area</h2><div class="row">';
+                    for (const [name, details] of Object.entries(data)) {
+                        html += `
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card">
+                                    <img src="${details.image_url}" class="card-img-top" alt="${name}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${name}</h5>
+                                        <p><strong>Address:</strong> ${details.location}</p>
+                                        <p><strong>Phone:</strong> ${details.PhoneNumber}</p>
+                                        <p><strong>Rating:</strong> ${details.rating} (${details.review_count} reviews)</p>
+                                        <a href="${details.url}" class="btn btn-primary" target="_blank">Visit Now!</a>
                                     </div>
                                 </div>
-                            `;
-                        }
-                        html += '</div>';
-                        resultsSection.innerHTML = html;
-                    } else {
-                        resultsSection.innerHTML = '<p class="text-center text-danger">No therapists found nearby.</p>';
+                            </div>
+                        `;
                     }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    resultsSection.innerHTML = '<p class="text-center text-danger">An error occurred. Please try again.</p>';
-                });
+                    html += '</div>';
+                    resultsSection.innerHTML = html;
+                } else {
+                    resultsSection.innerHTML = '<p class="text-center text-danger">No therapists found nearby.</p>';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                resultsSection.innerHTML = '<p class="text-center text-danger">An error occurred. Please try again.</p>';
+            });
         });
     </script>
 {% endblock %}
