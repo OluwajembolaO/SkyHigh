@@ -86,31 +86,7 @@
                 </div>
             </div>
 
-            <div class="row mt-5" id="resultsSection" style="display: none;">
-                {% if error %}
-                    <p class="text-center text-danger">{{ error }}</p>
-                {% elif data %}
-                    <h2 class="text-center mb-4">Top 5 Therapists Near Your Area</h2>
-                    <div class="row">
-                        {% for name, details in data.items() %}
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card">
-                                    <img src="{{ details.image_url }}" class="card-img-top" alt="{{ name }}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ name }}</h5>
-                                        <p><strong>Address:</strong> {{ details.location }}</p>
-                                        <p><strong>Phone:</strong> {{ details.PhoneNumber }}</p>
-                                        <p><strong>Rating:</strong> {{ details.rating }} ({{ details.review_count }} reviews)</p>
-                                        <a href="{{ details.url }}" class="btn btn-primary" target="_blank">Visit Now!</a>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-center text-danger">No therapists found nearby.</p>
-                {% endif %}
-            </div>
+            <div class="row mt-5" id="resultsSection"></div>
         </div>
     </section>
 
