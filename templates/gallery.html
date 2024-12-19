@@ -57,11 +57,7 @@
           {% endfor %}
         </div>
 
-        <div id="details" hidden>
-          <img>
-          <p id="title"></p>
-          <p id="description"></p>
-        </div>
+        <div id="details"></div>
         <div id="dimming"></div>
         
       </div>
@@ -107,10 +103,7 @@
             alert(data.error); 
             return;
           }
-          
-          document.getElementById('details').hidden = false;
-          document.getElementById('title').textContent = data.title
-          document.getElementById('description').textContent = data.description
+
         })
         .catch(err => {
           console.error('Error', err);
