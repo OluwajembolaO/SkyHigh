@@ -27,9 +27,11 @@ create_databases()
 def details():
     data = request.get_json()
     if not data: return jsonify({'error': 'no data'})
+    
 
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
+    
 
     image_details = cur.execute('''
         SELECT * FROM image_details 
@@ -40,8 +42,9 @@ def details():
     if not image_details: return jsonify({'error': 'not found'})
 
     return jsonify({
-        'title': image_details[1],
-        'description': image_details[2]
+        'views': image_details[1],
+        'likes': image_details[2],
+        'comments': image_details[3]
     })
 
 

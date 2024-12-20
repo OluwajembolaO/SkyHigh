@@ -43,6 +43,7 @@
             <button type="submit" class="btn btn-primary">Search</button>
           </div>
         </form>
+        
       
         <div class="container grids" style="margin-top: 50px;">
           {% for image in data %}
@@ -56,28 +57,25 @@
             </div>
           {% endfor %}
         </div>
-
         <div id="details"></div>
         <div id="dimming"></div>
-        
       </div>
     </section>
+    
 
   <script>
-    let username = document.getElementById('btnradio1');
-    let description = document.getElementById('btnradio2');
-    let search = document.getElementById('search');
+    const username = document.getElementById('btnradio1');
+    const description = document.getElementById('btnradio2');
+    const search = document.getElementById('search');
+    const sortOptions = document.querySelectorAll('.dropdown-item');
+    const current = document.getElementById('current');
 
-    username.addEventListener('click', function() {
+    username.addEventListener('click', () => {
       search.placeholder='Username';
     });
-    description.addEventListener('click', function() {
+    description.addEventListener('click', () => {
       search.placeholder='Description';
     });
-  </script>
-  <script>
-    let sortOptions = document.querySelectorAll('.dropdown-item');
-    let current = document.getElementById('current')
 
     sortOptions.forEach(option => {
       option.addEventListener('click', () => {
@@ -85,12 +83,15 @@
       });
     });
   </script>
+
   <script>
     document.querySelectorAll('.send').forEach(image => {
       image.addEventListener('click', function(e) {
         e.preventDefault();
 
-        let url = this.getAttribute('data-url')
+        const url = this.getAttribute('data-url')
+        const detailsDiv = document.getElementById('details');
+        const dimmingDiv = document.getElementById('dimming');
 
         fetch('/details', {
           method: 'POST',
@@ -99,9 +100,13 @@
         })
         .then(response => response.json())
         .then(data => {
+          console.log(data);
           if (data.error) {
-            alert(data.error); 
-            return;
+            detailsDiv.innerHTML = 
+              `<p>An error occured</p>`;
+          } else {
+            detailsDiv.innerHTML = 
+              `<p>${Object.entries(data)}</p>`;
           }
 
         })

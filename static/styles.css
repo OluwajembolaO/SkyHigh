@@ -65,9 +65,9 @@ img {
     grid-template-columns: auto auto auto;
     gap: 5vh 5vw;
 }
+/*
 
 #details {
-    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -81,7 +81,6 @@ img {
 }
 
 #dimming {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -90,3 +89,4 @@ img {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
+    */
