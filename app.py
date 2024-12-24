@@ -28,11 +28,9 @@ def details():
     data = request.get_json()
     if not data: return jsonify({'error': 'no data'})
     
-
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
     
-
     image_details = cur.execute('''
         SELECT * FROM image_details 
         WHERE id = (
@@ -67,21 +65,135 @@ def find_therapy():
 @login_required
 def gallery():
     if request.method == "POST":
-        search_by = request.form.get("search")
+        search_for = request.form.get("search")
         sort_by = request.form.get("current")
-        
+        actual = search_for[0:len(search_for)-4]
+        type = search_for[len(search_for)-4:]
+
         data = ""
         match sort_by:
-            case "Newest":...
-            case "Oldest":...
-            case "Views":...
-            case "Likes":...
-            case "Comments":...
-            case "Username":...
-            case "Description":...
-            case _: return render_template("error.html", error="Stop html hacking pleasease")
+            case "Newest":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY date DESC
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE description LIKE ?
+                        ORDER BY date DESC
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Oldest":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE description LIKE ?
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Views":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY image_details.views DESC
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE description LIKE ?
+                        ORDER BY image_details.views DESC
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Likes":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY image_details.likes DESC
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE description LIKE ?
+                        ORDER BY image_details.likes DESC
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Comments":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY image_details.comments DESC
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN image_details ON image_details.id = images.user_id
+                        WHERE description LIKE ?
+                        ORDER BY image_details.comments DESC
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Username":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN users ON users.id = images.user_id
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY users.username
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        JOIN users ON users.id = images.user_id
+                        WHERE description LIKE ?
+                        ORDER BY users.username
+                    ''', (f"%{actual}%",)).fetchall()
+            case "Description":
+                if type == "user":
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE user_id IN (
+                            SELECT id FROM users
+                            WHERE username LIKE ?
+                        )
+                        ORDER BY description
+                    ''', (f"%{actual}%",)).fetchall()
+                else:
+                    data = cur.execute('''
+                        SELECT url, description, date FROM images
+                        WHERE description LIKE ?
+                        ORDER BY description
+                    ''', (f"%{actual}%",)).fetchall()
+            case _: 
+                return render_template("error.html", error="Stop html hacking pleasease")
         
-        return render_template("gallery.html")
+        return render_template("gallery.html", data=data)
     data = cur.execute('''
         SELECT url, description, date FROM images
         ORDER BY date DESC

@@ -56,8 +56,13 @@ img {
     text-align: inherit;
     text-decoration: none;
     white-space: nowrap;
-    background-color: transparent;
+    background-color: #63C5DA;
     border: 0;
+}
+
+.notquite::placeholder {
+    font-weight: 400;
+    color: black;
 }
 
 .grids {
