@@ -28,8 +28,10 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-lg-5 me-lg-auto">{% block navbar %}{% endblock %}</ul>
-                <div class="d-none d-lg-block"><a href="/login"><button class="btn">Log out</button></a></div>
+                <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                    {% block navbar %}{% endblock %}
+                    <li class="nav-item"><a class="nav-link" href="/login">Log out</a></li>
+                </ul>
             </div>
                     
             </div>

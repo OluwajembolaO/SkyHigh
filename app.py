@@ -45,8 +45,8 @@ def details():
     viewed = any(user_id == viewers[0] for viewers in viewed)
     if not viewed: 
         cur.execute("INSERT INTO views VALUES (?, ?)", (image_id, user_id))
-        cur.execute("UPDATE image_details SET views = views + 1")
-    
+        cur.execute("UPDATE image_details SET views = views + 1 WHERE id = ?", (image_id,))
+    con.commit()
 
     return jsonify({
         'views': image_details[1],
