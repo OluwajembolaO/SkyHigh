@@ -78,12 +78,13 @@ img {
     left: 50%;
     transform: translate(-50%, -50%);
     height: 90%;
-    width: 75%;
-    background-color: #fbfcf8;
-    border: 1px solid #ddd;
+    max-width: 1024px;
+    width: 70%;
+    background-color: #ddd;
+    border: 1px solid white;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 999;
+    overflow: auto;
 }
 
 #dimming {
@@ -97,11 +98,11 @@ img {
     z-index: 998;
 }
 
-.height-100 {
-    height: 100%;
+.max {
+    min-height: 100%;
 }
 
 .comments {
-    margin-left: 20px;
-    border: 2px solid black;
+    margin-top: 5vh;
+    
 }

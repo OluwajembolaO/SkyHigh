@@ -127,11 +127,11 @@
             `;
           } else {
             detailsDiv.innerHTML = `
-              <div class="height-100" style="float: left;">
-                <img class="height-100" src="${url}">
-              </div>
-              <div class="comments height-100">
-                <p>${Object.entries(data)}</p>
+              <div><img class="max" src="${url}"></div>
+              <div class="comments">
+                <i class="fa-solid fa-eye"></i> ${data.views}
+                <i class="fa-regular fa-heart" style="margin-left: 1.5vw;"></i> ${data.likes}
+                <i class="fa-regular fa-comment" style="margin-left: 1.5vw;"></i> ${data.comments}
               </div>
             `;
             detailsDiv.style.display = "initial";
