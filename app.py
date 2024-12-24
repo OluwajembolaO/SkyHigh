@@ -23,6 +23,42 @@ cur = con.cursor()
 create_databases()
 
 
+@app.route('/comment', methods=['POST'])
+@login_required
+def comment():
+    data = request.get_json()
+    if not data: return jsonify({'error': 'no data'})
+    url = data['url']
+    if not url: return jsonify({'error': 'no url'})
+    user_input = data['user_input'].strip()
+    if not user_input or profanity.contains_profanity(user_input): 
+        return jsonify({'error': 'invalid comment'})
+    
+    image_id = cur.execute('''
+        SELECT id FROM image_details 
+        WHERE id = (
+            SELECT id FROM images WHERE url = ?
+        )
+    ''', (url,)).fetchone()[0]
+    if not image_id: return jsonify({'error': 'not found'})
+    user_id = session["user_id"]
+    username = cur.execute("SELECT username FROM users WHERE id = ?", (user_id,)).fetchone()[0]
+    today = currenttime().strftime("%Y-%m-%d")
+    comment_count = cur.execute("SELECT comments FROM image_details WHERE id = ?", (image_id,)).fetchone()[0]
+
+    cur.execute("INSERT INTO comments (image_id, username, comment, date) VALUES (?, ?, ?, ?)", 
+                (image_id, username, user_input, today))
+    cur.execute("UPDATE image_details SET comments = comments + 1 WHERE id = ?", (image_id,))
+    con.commit()
+
+    return jsonify({
+        'username': username,
+        'comment': user_input,
+        'date': today, 
+        'comment_count': comment_count
+    })
+
+
 @app.route('/details', methods=['POST'])
 @login_required
 def details():
@@ -38,7 +74,6 @@ def details():
         )
     ''', (url,)).fetchone()[0]
     if not image_id: return jsonify({'error': 'not found'})
-
     user_id = session["user_id"]
 
     viewed = cur.execute("SELECT user_id FROM views WHERE id = ?", (image_id,)).fetchall()
@@ -57,11 +92,15 @@ def details():
         WHERE id = ?
     ''', (image_id,)).fetchone()
 
+    comments = cur.execute("SELECT username, comment, date FROM comments WHERE image_id = ?", (image_id,)).fetchall()
+    print(comments)
+
     return jsonify({
         'views': image_details[0],
         'likes': image_details[1],
-        'comments': image_details[2],
-        'liked': liked
+        'comment_count': image_details[2],
+        'liked': liked,
+        'comments': comments
     })
 
 
@@ -211,7 +250,7 @@ def gallery():
                     ''', (f"%{actual}%",)).fetchall()
             case _: 
                 return render_template("error.html", error="Stop html hacking pleasease")
-        
+            
         return render_template("gallery.html", data=data)
     data = cur.execute('''
         SELECT url, description, date FROM images
@@ -249,18 +288,20 @@ def likes():
             SELECT id FROM images WHERE url = ?
         )
     ''', (url,)).fetchone()[0]
+    if not image_id: return jsonify({'error': 'not found'})
+    user_id = session["user_id"]
 
-    present = cur.execute("SELECT * FROM likes WHERE id = ? AND user_id = ?", (image_id, session["user_id"])).fetchone()
+    present = cur.execute("SELECT * FROM likes WHERE id = ? AND user_id = ?", (image_id, user_id)).fetchone()
     print(present)
     if inner == "<i class=\"fa-regular fa-heart\"></i>":
         if present: return jsonify({'error': 'html hacking?!'})
         cur.execute("UPDATE image_details SET likes = likes + 1 WHERE id = ?", (image_id,))
-        cur.execute("INSERT INTO likes VALUES (?, ?)", (image_id, session["user_id"]))
+        cur.execute("INSERT INTO likes VALUES (?, ?)", (image_id, user_id))
         type = "not_pressed"
     elif inner == "<i class=\"fa-solid fa-heart\"></i>":
         if not present: return jsonify({'error': 'html hacking?!'})
         cur.execute("UPDATE image_details SET likes = likes - 1 WHERE id = ?", (image_id,))
-        cur.execute("DELETE FROM likes WHERE id = ? AND user_id = ?", (image_id, session["user_id"]))
+        cur.execute("DELETE FROM likes WHERE id = ? AND user_id = ?", (image_id, user_id))
         type = "pressed"
         
     con.commit()

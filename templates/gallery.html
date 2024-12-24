@@ -19,7 +19,7 @@
           <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
           <label class="btn btn-outline-primary" for="btnradio2">Description</label>
   
-          <input class="form-control" id="search" placeholder="Username" style="flex-grow: 1;margin-left: 10px;">
+          <input class="form-control" id="search" placeholder="Username" style="flex-grow: 1; margin-left: 10px;">
           <input name="search" id="real" hidden>
 
           <div class="dropdown" style="margin-right: 10px">
@@ -68,6 +68,7 @@
       <div id="dimming" onclick="clearDimming()"></div>
     </div>
   </section>
+  
     
 
   <script>
@@ -129,9 +130,8 @@
               <p>An error occured</p>
             `;
           } else {
-            let heart_type;
-            if (data.liked) heart_type = "fa-solid"
-            else heart_type = "fa-regular"
+            const heart_type = data.liked ? "fa-solid" : "fa-regular";
+
             detailsDiv.innerHTML = `
               <div><img class="max" src="${url}"></div>
               <div class="comments">
@@ -142,11 +142,26 @@
                 <span id="like_count" class="mr">${data.likes}</span>
 
                 <i class="fa-regular fa-comment"></i>
-                <span class="mr">${data.comments}</span>
+                <span class="mr" id="comment_count">${data.comment_count}</span>
+
                 <fieldset>
-                  <legend>Comments</legend>
-                  <label>hi</label>
-                  <input placeholder="Comment something!">
+                  <legend style="margin-bottom: 10px;">Comments</legend>
+
+                  <hr style="width: 100%; margin: 10px 0;">
+                  <div id="comment-section" style="width: 100%;">
+                    ${data.comments.map(comment => `
+                      <p class="username">${comment[0]} <span class="date">${comment[2]}</span></p>
+                      <div class="comment-container">
+                        <p class="comment">${comment[1]}</p>
+                      </div>
+                    `).join('')}
+                  </div>
+                  <hr style="width: 100%; margin-bottom: 20px;">
+
+                  <div style="display: flex; align-items: center; width: 100%;">
+                    <input id="comment" class="form-control" placeholder="Comment something!" style="flex: 1; margin-right: 10px;">
+                    <button class="btn btn-primary" onclick="comments()">Comment</button>
+                  </div>
                 </fieldset>
               </div>
             `;
@@ -165,7 +180,7 @@
     function likes() {
       const likes = document.getElementById('likes');
       const like_count = document.getElementById('like_count')
-      const url = likes.getAttribute('data-url');
+      const url = document.querySelector('.max').src;
 
       fetch('/likes', {
         method: 'POST',
@@ -175,7 +190,6 @@
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          console.log(likes.innerHTML)
           alert(data.error)
         } else {
           like_count.innerHTML = `${data.likes}`;
@@ -186,6 +200,40 @@
             likes.innerHTML = `<i class="fa-regular fa-heart"></i>`;
           }
         }
+      })
+      .catch(err => {
+        console.error('Error', err);
+        alert('an error occured');
+      });
+    }
+
+    function comments() {
+      const user_input = document.getElementById('comment');
+      const comment_section = document.getElementById('comment-section');
+      const url = document.querySelector('.max').src;
+      const comment_count = document.getElementById('comment_count');
+
+
+      fetch('/comment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',},
+        body: JSON.stringify({'url': url, 'user_input': user_input.value})
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error)
+        } else {
+          comment_count.innerHTML = `${data.comment_count}`;
+
+          comment_section.innerHTML += `
+          <p class="username">${data.username} <span class="date">${data.date}</span></p>
+          <div class="comment-container">
+            <p class="comment">${data.comment}</p>
+          </div>
+          `
+        }
+        user_input.value = ""
       })
       .catch(err => {
         console.error('Error', err);

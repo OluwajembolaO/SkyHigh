@@ -17,8 +17,9 @@ cur = con.cursor()
 def create_databases():
     cur.execute('''
         CREATE TABLE IF NOT EXISTS comments (
-            id INTEGER,
+            id INTEGER PRIMARY KEY,
             image_id INTEGER,
+            username TEXT NOT NULL,
             comment VARCHAR(500) NOT NULL,
             date DATE NOT NULL,
             FOREIGN KEY(image_id) REFERENCES images(id)
