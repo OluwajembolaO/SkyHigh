@@ -20,6 +20,7 @@ def create_databases():
             id INTEGER,
             image_id INTEGER,
             comment VARCHAR(500) NOT NULL,
+            date DATE NOT NULL,
             FOREIGN KEY(image_id) REFERENCES images(id)
         )
     ''')

@@ -240,13 +240,9 @@ def likes():
     if not data: return jsonify({'error': 'no data'})
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
-    print(url)
-    
     inner = data['inner']
-    print(inner)
     if not inner: jsonify({'error': 'html hacking?'})
     
-
     image_id = cur.execute('''
         SELECT id FROM image_details 
         WHERE id = (
