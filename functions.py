@@ -16,11 +16,11 @@ cur = con.cursor()
 
 def create_databases():
     cur.execute('''
-        CREATE TABLE IF NOT EXISTS comment_details (
+        CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY,
             image_id INTEGER,
             comment VARCHAR(500) NOT NULL,
-            FOREIGN KEY(image_id) REFERENCES users(images)
+            FOREIGN KEY(image_id) REFERENCES images(id)
         )
     ''')
     cur.execute('''
@@ -39,7 +39,15 @@ def create_databases():
             views INTEGER DEFAULT 0,
             likes INTEGER DEFAULT 0,
             comments INTEGER DEFAULT 0,
-            FOREIGN KEY(id) REFERENCES users(images)
+            FOREIGN KEY(id) REFERENCES images(id)
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS likes (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER,
+            FOREIGN KEY(id) REFERENCES images(id),
+            FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
     cur.execute('''
@@ -56,6 +64,14 @@ def create_databases():
             username VARCHAR(25) NOT NULL,
             hash_password TEXT NOT NULL,
             UNIQUE (username)
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS views (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER,
+            FOREIGN KEY(id) REFERENCES images(id),
+            FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
     cur.execute('''

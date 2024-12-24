@@ -27,7 +27,6 @@ create_databases()
 def details():
     data = request.get_json()
     if not data: return jsonify({'error': 'no data'})
-    
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
     
@@ -36,8 +35,18 @@ def details():
         WHERE id = (
             SELECT id FROM images WHERE url = (?)
         )
-    ''', (url, )).fetchone()
+    ''', (url,)).fetchone()
     if not image_details: return jsonify({'error': 'not found'})
+
+    image_id = image_details[0]
+    user_id = session["user_id"]
+
+    viewed = cur.execute("SELECT user_id FROM views WHERE id = ?", (image_id,)).fetchall()
+    viewed = any(user_id == viewers[0] for viewers in viewed)
+    if not viewed: 
+        cur.execute("INSERT INTO views VALUES (?, ?)", (image_id, user_id))
+        cur.execute("UPDATE image_details SET views = views + 1")
+    
 
     return jsonify({
         'views': image_details[1],
