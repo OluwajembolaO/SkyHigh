@@ -103,6 +103,13 @@ img {
 }
 
 .comments {
-    margin-top: 5vh;
-    
+    margin-top: 5vh;   
+}
+
+.mr {
+    margin-right: 1.5vw;
+}
+
+#likes:hover {
+    cursor: pointer;
 }

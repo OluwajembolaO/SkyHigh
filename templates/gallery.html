@@ -57,7 +57,7 @@
           </div>
         {% endfor %}
       </div>
-      
+
       <div class="container "></div>
         {% if not data %}
           <p class="text-center">There are no images or none match your searches!</p>
@@ -71,25 +71,10 @@
     
 
   <script>
-    const username = document.getElementById('btnradio1');
-    const description = document.getElementById('btnradio2');
-    const search = document.getElementById('search');
-    const sortOptions = document.querySelectorAll('.dropdown-item');
-    const current = document.getElementById('current');
-
-    username.addEventListener('click', () => {
-      search.placeholder='Username';
-    });
-    description.addEventListener('click', () => {
-      search.placeholder='Description';
-    });
-
-    sortOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        current.value = option.textContent;
-      });
-    });
-
+    function clearDimming() {
+      document.getElementById('dimming').style.display = "none";
+      document.getElementById('details').style.display = "none";
+    }
     function enable() {
       current.disabled = false;
     }
@@ -103,14 +88,27 @@
         real.value = search_for.value + "desc";
       }
     }
-    
-    function clearDimming() {
-      document.getElementById('dimming').style.display = "none";
-      document.getElementById('details').style.display = "none";
-    }
-  </script>
 
-  <script>
+
+    const username = document.getElementById('btnradio1');
+    const description = document.getElementById('btnradio2');
+    const search = document.getElementById('search');
+    username.addEventListener('click', () => {
+      search.placeholder='Username';
+    });
+    description.addEventListener('click', () => {
+      search.placeholder='Description';
+    });
+
+    const sortOptions = document.querySelectorAll('.dropdown-item');
+    const current = document.getElementById('current');
+    sortOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        current.value = option.textContent;
+      });
+    });
+
+
     document.querySelectorAll('.send').forEach(image => {
       image.addEventListener('click', function(e) {
         e.preventDefault();
@@ -126,18 +124,25 @@
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           if (data.error) {
             detailsDiv.innerHTML = `
               <p>An error occured</p>
             `;
           } else {
+            let heart_type;
+            if (data.liked) heart_type = "fa-solid"
+            else heart_type = "fa-regular"
             detailsDiv.innerHTML = `
               <div><img class="max" src="${url}"></div>
               <div class="comments">
-                <i class="fa-solid fa-eye"></i> ${data.views}
-                <i class="fa-regular fa-heart" style="margin-left: 1.5vw;"></i> ${data.likes}
-                <i class="fa-regular fa-comment" style="margin-left: 1.5vw;"></i> ${data.comments}
+                <i class="fa-solid fa-eye"></i> 
+                <span class="mr">${data.views}</span>
+                
+                <a id="likes" onclick="likes()" data-url="${url}"><i class="${heart_type} fa-heart"></i></a> 
+                <span id="like_count" class="mr">${data.likes}</span>
+
+                <i class="fa-regular fa-comment"></i>
+                <span class="mr">${data.comments}</span>
               </div>
             `;
             detailsDiv.style.display = "initial";
@@ -149,9 +154,38 @@
           console.error('Error', err);
           alert('an error occured');
         });
-
       });
     });
-  </script>
 
+    function likes() {
+      const likes = document.getElementById('likes');
+      const like_count = document.getElementById('like_count')
+      const url = likes.getAttribute('data-url');
+
+
+      fetch('/likes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',},
+        body: JSON.stringify({'url': url, 'inner': likes.innerHTML})
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert('An error occured!')
+        } else {
+          like_count.innerHTML = `${data.likes}`;
+
+          if (data.type == "not_pressed") {
+            likes.innerHTML = `<i class="fa-solid fa-heart"></i>`;
+          } else {
+            likes.innerHTML = `<i class="fa-regular fa-heart"></i>`;
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Error', err);
+        alert('an error occured');
+      });
+    }
+  </script>
 {% endblock %}

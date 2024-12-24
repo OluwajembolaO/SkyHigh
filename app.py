@@ -46,6 +46,10 @@ def details():
     if not viewed: 
         cur.execute("INSERT INTO views VALUES (?, ?)", (image_id, user_id))
         cur.execute("UPDATE image_details SET views = views + 1 WHERE id = ?", (image_id,))
+    
+    liked = cur.execute("SELECT user_id FROM likes WHERE id = ?", (image_id,)).fetchall()
+    liked = any(user_id == likers[0] for likers in liked)
+    
     con.commit()
 
     image_details = cur.execute('''
@@ -56,7 +60,8 @@ def details():
     return jsonify({
         'views': image_details[0],
         'likes': image_details[1],
-        'comments': image_details[2]
+        'comments': image_details[2],
+        'liked': liked
     })
 
 
@@ -226,6 +231,42 @@ def home():
     if not q: return render_template("error.html", error="Sorry! Something is wrong with the quote API!")
 
     return render_template("index.html", qu=q, user=username[0])
+
+
+@app.route('/likes', methods=['POST'])
+@login_required
+def likes():
+    data = request.get_json()
+    if not data: return jsonify({'error': 'no data'})
+    url = data['url']
+    if not url: return jsonify({'error': 'no url'})
+    inner = data['inner']
+    if not inner: jsonify({'error': 'html hacking?'})
+
+    print(inner)
+    image_id = cur.execute('''
+        SELECT id FROM image_details 
+        WHERE id = (
+            SELECT id FROM images WHERE url = ?
+        )
+    ''', (url,)).fetchone()[0]
+
+    if inner == "<i class=\"fa-regular fa-heart\"></i>":
+        cur.execute("UPDATE image_details SET likes = likes + 1 WHERE id = ?", (image_id,))
+        cur.execute("INSERT INTO likes VALUES (?, ?)", (image_id, session["user_id"]))
+        type = "not_pressed"
+    elif inner == "<i class=\"fa-solid fa-heart\"></i>":
+        cur.execute("UPDATE image_details SET likes = likes - 1 WHERE id = ?", (image_id,))
+        cur.execute("DELETE FROM likes WHERE id = ? AND user_id = ?", (image_id, session["user_id"]))
+        type = "pressed"
+        
+    con.commit()
+    likes_count = cur.execute("SELECT likes FROM image_details WHERE id = ?", (image_id,)).fetchone()[0]
+
+    return jsonify({
+        'likes': likes_count,
+        'type' : type
+    })
 
 
 @app.route('/login', methods=['GET', 'POST'])
