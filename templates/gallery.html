@@ -162,7 +162,6 @@
       const like_count = document.getElementById('like_count')
       const url = likes.getAttribute('data-url');
 
-
       fetch('/likes', {
         method: 'POST',
         headers: {'Content-Type': 'application/json',},
@@ -171,7 +170,8 @@
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          alert('An error occured!')
+          console.log(likes.innerHTML)
+          alert(data.error)
         } else {
           like_count.innerHTML = `${data.likes}`;
 

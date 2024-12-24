@@ -240,10 +240,13 @@ def likes():
     if not data: return jsonify({'error': 'no data'})
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
+    print(url)
+    
     inner = data['inner']
-    if not inner: jsonify({'error': 'html hacking?'})
-
     print(inner)
+    if not inner: jsonify({'error': 'html hacking?'})
+    
+
     image_id = cur.execute('''
         SELECT id FROM image_details 
         WHERE id = (
@@ -251,11 +254,15 @@ def likes():
         )
     ''', (url,)).fetchone()[0]
 
+    present = cur.execute("SELECT * FROM likes WHERE id = ? AND user_id = ?", (image_id, session["user_id"])).fetchone()
+    print(present)
     if inner == "<i class=\"fa-regular fa-heart\"></i>":
+        if present: return jsonify({'error': 'html hacking?!'})
         cur.execute("UPDATE image_details SET likes = likes + 1 WHERE id = ?", (image_id,))
         cur.execute("INSERT INTO likes VALUES (?, ?)", (image_id, session["user_id"]))
         type = "not_pressed"
     elif inner == "<i class=\"fa-solid fa-heart\"></i>":
+        if not present: return jsonify({'error': 'html hacking?!!'})
         cur.execute("UPDATE image_details SET likes = likes - 1 WHERE id = ?", (image_id,))
         cur.execute("DELETE FROM likes WHERE id = ? AND user_id = ?", (image_id, session["user_id"]))
         type = "pressed"
