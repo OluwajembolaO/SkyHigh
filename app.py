@@ -3,8 +3,9 @@ from flask import Flask, redirect, render_template, request, jsonify, session
 from flask_session import Session
 from profanity import profanity
 import sqlite3
+import time
 
-from functions import create_databases, fetch_therapy_data, generateImage, login_required, time, qotd
+from functions import create_databases, fetch_therapy_data, generateImage, login_required, currenttime, qotd
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -30,15 +31,14 @@ def details():
     url = data['url']
     if not url: return jsonify({'error': 'no url'})
     
-    image_details = cur.execute('''
-        SELECT * FROM image_details 
+    image_id = cur.execute('''
+        SELECT id FROM image_details 
         WHERE id = (
-            SELECT id FROM images WHERE url = (?)
+            SELECT id FROM images WHERE url = ?
         )
-    ''', (url,)).fetchone()
-    if not image_details: return jsonify({'error': 'not found'})
+    ''', (url,)).fetchone()[0]
+    if not image_id: return jsonify({'error': 'not found'})
 
-    image_id = image_details[0]
     user_id = session["user_id"]
 
     viewed = cur.execute("SELECT user_id FROM views WHERE id = ?", (image_id,)).fetchall()
@@ -48,10 +48,15 @@ def details():
         cur.execute("UPDATE image_details SET views = views + 1 WHERE id = ?", (image_id,))
     con.commit()
 
+    image_details = cur.execute('''
+        SELECT views, likes, comments FROM image_details 
+        WHERE id = ?
+    ''', (image_id,)).fetchone()
+
     return jsonify({
-        'views': image_details[1],
-        'likes': image_details[2],
-        'comments': image_details[3]
+        'views': image_details[0],
+        'likes': image_details[1],
+        'comments': image_details[2]
     })
 
 
@@ -283,7 +288,7 @@ def whiteboard():
             return render_template("error.html", error="Sorry! Something is wrong! Try to change up the words!")
 
         cur.execute("INSERT INTO images (user_id, url, description, date) VALUES (?, ?, ?, ?)",
-                    (session["user_id"], url, story, time()))
+                    (session["user_id"], url, story, currenttime()))
         
         con.commit()
         return render_template("whiteboard.html", image=url, user=username[0])

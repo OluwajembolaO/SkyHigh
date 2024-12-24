@@ -57,6 +57,12 @@
           </div>
         {% endfor %}
       </div>
+      
+      <div class="container "></div>
+        {% if not data %}
+          <p class="text-center">There are no images or none match your searches!</p>
+        {% endif %}
+      </div>
 
       <div id="details" class="container-lg"></div>
       <div id="dimming" onclick="clearDimming()"></div>

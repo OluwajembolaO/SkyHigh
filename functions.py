@@ -85,7 +85,7 @@ def create_databases():
     con.commit()
 
 
-def time():
+def currenttime():
     return datetime.now()
 
 
@@ -150,6 +150,7 @@ def generateImage(user_input):
         return render_template("error.html", error=e)
     
     imageURL = json.loads(result.model_dump_json())['data'][0]['url']
+    print(imageURL)
  
     return upload_image_to_imgbb(imageURL, IMGBB_API_KEY)
     
@@ -170,7 +171,7 @@ def login_required(f):
 
 def qotd():
     # the same quote might appear for 2 dates because the quotes refresh at around 9 pm
-    formatted_date = time().strftime("%Y-%m-%d") + "%"
+    formatted_date = currenttime().strftime("%Y-%m-%d") + "%"
     quote = cur.execute("SELECT quote, author FROM quotes WHERE date LIKE ?", (formatted_date, )).fetchone()
     if quote: return f'"{quote[0]}" — {quote[1]}'
 
@@ -178,7 +179,7 @@ def qotd():
     if response.status_code == 200:
         data = response.json()
 
-        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (time(), data[0]["q"], data[0]["a"]))
+        cur.execute("INSERT INTO quotes (date, quote, author) VALUES (?, ?, ?)", (currenttime(), data[0]["q"], data[0]["a"]))
         s = f'"{data[0]["q"]}" — {data[0]["a"]}'
 
         con.commit()
@@ -216,6 +217,7 @@ def upload_image_to_imgbb(image_url, api_key):
 
     # Step 4: Return the new URL of the uploaded image
     if result['status'] == 200:
+        print(result['data']['url'])
         return result['data']['url']
     else:
         print(f"Error: {result['error']['message']}")
