@@ -102,8 +102,12 @@ img {
     min-height: 100%;
 }
 
-.comments {
+.mt {
     margin-top: 5vh;   
+}
+
+.mt-smaller {
+    margin-top: 2.5vh;
 }
 
 .mr {
@@ -149,4 +153,10 @@ fieldset {
     font-weight: normal;
     margin-left: 10px;
     font-size: .75em;
+  }
+  
+  .description {
+    text-align: center;
+    font-family: sans-serif;
+    color: #28231D;
   }

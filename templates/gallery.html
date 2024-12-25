@@ -68,8 +68,6 @@
       <div id="dimming" onclick="clearDimming()"></div>
     </div>
   </section>
-  
-    
 
   <script>
     function clearDimming() {
@@ -127,14 +125,20 @@
         .then(data => {
           if (data.error) {
             detailsDiv.innerHTML = `
-              <p>An error occured</p>
+              <p class="description">An error occured</p>
             `;
           } else {
             const heart_type = data.liked ? "fa-solid" : "fa-regular";
 
             detailsDiv.innerHTML = `
               <div><img class="max" src="${url}"></div>
-              <div class="comments">
+              <p class="description mt-smaller">
+                ${data.description}
+                <br>
+                - <i>${data.creator}</i>
+              </p>
+
+              <div class="mt">
                 <i class="fa-solid fa-eye"></i> 
                 <span class="mr">${data.views}</span>
                 
@@ -143,8 +147,10 @@
 
                 <i class="fa-regular fa-comment"></i>
                 <span class="mr" id="comment_count">${data.comment_count}</span>
+                
+                <span>${data.date}</span>
 
-                <fieldset>
+                <fieldset>  
                   <legend style="margin-bottom: 10px;">Comments</legend>
 
                   <hr style="width: 100%; margin: 10px 0;">
@@ -206,7 +212,6 @@
         alert('an error occured');
       });
     }
-
     function comments() {
       const user_input = document.getElementById('comment');
       const comment_section = document.getElementById('comment-section');

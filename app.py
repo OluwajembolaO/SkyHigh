@@ -93,14 +93,22 @@ def details():
     ''', (image_id,)).fetchone()
 
     comments = cur.execute("SELECT username, comment, date FROM comments WHERE image_id = ?", (image_id,)).fetchall()
-    print(comments)
+    expanded = cur.execute("SELECT description, date FROM images WHERE id = ?", (image_id,)).fetchone()
+    creator = cur.execute('''
+        SELECT username FROM users WHERE id = (
+            SELECT user_id FROM images WHERE id = ?
+        )
+    ''', (image_id,)).fetchone()[0]
 
     return jsonify({
         'views': image_details[0],
         'likes': image_details[1],
         'comment_count': image_details[2],
         'liked': liked,
-        'comments': comments
+        'comments': comments,
+        'description': expanded[0],
+        'date': expanded[1],
+        'creator': creator
     })
 
 
