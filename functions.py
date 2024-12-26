@@ -23,9 +23,7 @@ def create_databases():
             comment VARCHAR(500) NOT NULL,
             date DATE NOT NULL,
             FOREIGN KEY(image_id) REFERENCES images(id)
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS images (
             id INTEGER PRIMARY KEY,
             user_id INTEGER,
@@ -33,48 +31,38 @@ def create_databases():
             description VARCHAR(500) NOT NULL,
             date DATETIME NOT NULL,
             FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS image_details (
             id INTEGER PRIMARY KEY,
             views INTEGER DEFAULT 0,
             likes INTEGER DEFAULT 0,
             comments INTEGER DEFAULT 0,
             FOREIGN KEY(id) REFERENCES images(id)
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS likes (
             id INTEGER,
             user_id INTEGER,
             FOREIGN KEY(id) REFERENCES images(id),
             FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS quotes (
             id INTEGER PRIMARY KEY,
             date DATE NOT NULL,
             quote TEXT NOT NULL,
             author TEXT NOT NULL
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
             username VARCHAR(25) NOT NULL,
             hash_password TEXT NOT NULL,
             UNIQUE (username)
-        )
-    ''')
-    cur.execute('''
+        );
         CREATE TABLE IF NOT EXISTS views (
             id INTEGER,
             user_id INTEGER,
             FOREIGN KEY(id) REFERENCES images(id),
             FOREIGN KEY(user_id) REFERENCES users(id)
-        )
+        );    
     ''')
     cur.execute('''
         CREATE TRIGGER IF NOT EXISTS inserting_into_image_details 
@@ -83,6 +71,13 @@ def create_databases():
         BEGIN
             INSERT INTO image_details (id) VALUES (NEW.id);
         END;
+    ''')
+    cur.execute('''
+        CREATE INDEX IF NOT EXISTS index_views_id ON views (id);
+        CREATE INDEX IF NOT EXISTS index_likes ON likes (id, user_id);
+        CREATE INDEX IF NOT EXISTS index_comments_id ON comments (id);
+        CREATE INDEX IF NOT EXISTS index_images_url ON images (url);
+        CREATE INDEX IF NOT EXISTS index_image_details_id ON image_details (id);
     ''')
     con.commit()
 
