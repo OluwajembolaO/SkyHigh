@@ -135,6 +135,7 @@ def gallery():
         sort_by = request.form.get("current")
         actual = search_for[0:len(search_for)-4]
         type = search_for[len(search_for)-4:]
+        
 
         data = ""
         match sort_by:

@@ -41,7 +41,7 @@
             </ul>
           </div>
 
-          <button type="submit" onclick="enable(); user_or_desc();" class="btn btn-primary">Search</button>
+          <button type="submit" onclick="gallery_submit();" class="btn btn-primary">Search</button>
         </div>
       </form>
       
@@ -74,18 +74,18 @@
       document.getElementById('dimming').style.display = "none";
       document.getElementById('details').style.display = "none";
     }
-    function enable() {
-      current.disabled = false;
-    }
-    function user_or_desc() {
+    function gallery_submit() {
+      document.getElementById('current').disabled = false;
+
       const search_for = document.getElementById('search');
-      const real = documnet.getElementById('real');
+      const real = document.getElementById('real');
       
       if (document.getElementById('btnradio1').checked) {
         real.value = search_for.value + "user";
       } else {
         real.value = search_for.value + "desc";
       }
+      
     }
 
 
